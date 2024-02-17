@@ -7,7 +7,7 @@ const HomePage = () => {
       <div style={{ flex: '0 0 auto', width: '250px', height: '100%', backgroundColor: '#f0f0f0' }}>
         <SideBar />
       </div>
-      <div  className=" pl-3 flex-1 h-full bg-white">
+      <div  className=" flex-1 h-full bg-white">
         <ProfilePage/>
       </div>
     </div>

@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import GoogleButton from 'react-google-button';
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoginMutation } from '../../Slices/userApiSlice';
 import { setCredentials } from '../../Slices/authSlice';
 import { CircularProgress } from '@chakra-ui/react';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
+import { useGoogleRegisterMutation } from '../../Slices/userApiSlice';
 
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [login, { isLoading }] = useLoginMutation();
+  const [googelLogin] = useGoogleRegisterMutation()
 
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [login, { isLoading }] = useLoginMutation();
 
   const { userInfo } = useSelector((state) => { return state.auth });
 
@@ -24,7 +27,35 @@ const LoginPage = () => {
     if (userInfo) {
       navigate('/Home ')
     }
-  }, [navigate, userInfo])
+  }, [navigate, userInfo]);
+
+
+  const googelAuth = async (data) => {
+    try {
+      console.log(data)
+      const {
+        email,
+        family_name: lastName,
+        given_name: firstName,
+        sub: googleId,
+        picture: profileImageURL,
+      } = data
+
+      const userData = {
+        firstName,
+        lastName,
+        email,
+        googleId,
+        profileImageName: profileImageURL,
+      }
+
+      const res = await googelLogin(userData).unwrap()
+      console.log(res)
+      dispatch(setCredentials({ ...res }))
+      navigate('/')
+    } catch (err) { }
+  }
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,7 +63,7 @@ const LoginPage = () => {
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
-      navigate('/signup')
+      navigate('/')
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
@@ -96,9 +127,18 @@ const LoginPage = () => {
             <span className="font-normal text-gray-500">or login with</span>
             <span className="h-px bg-gray-400 w-14"></span>
           </div>
-          <div className="flex items-center justify-center">
-            <GoogleButton />
-          </div>
+          <GoogleOAuthProvider clientId="207507060713-rk0uhm6ocbq42rq7e1p5bsu7ov4ct1rh.apps.googleusercontent.com">
+            <GoogleLogin
+              onSuccess={credentialResponse => {
+                const decoded = jwtDecode(credentialResponse.credential);
+                console.log(decoded);
+                googelAuth(decoded);
+              }}
+              onError={() => {
+                console.log('Login Failed');
+              }}
+            />
+          </GoogleOAuthProvider>
         </form>
       </div>
     </div>

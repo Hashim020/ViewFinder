@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: ['male', 'female', 'other'],
+      enum: ['male', 'female',],
     },
     username: {
       type: String,
@@ -26,13 +26,12 @@ const userSchema = new mongoose.Schema(
     },
     birthdate: {
       type: Date,
-      required: true,
     },
     isBlocked: {
       type: Boolean,
       default: false,
     },
-    profileImage: {
+    profileImageName: {
       type: String,
     },
     isVerified: {

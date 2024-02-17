@@ -4,16 +4,18 @@ import {
     authUser,
     registerUser,
     logoutUser,
-    registerUserOtpVerify,
+    registerOtpVerifiedUser,
     forgotPassword,
-    confirmResetPW
+    confirmResetPW,
+    googleRegister
 } from "../controllers/userController.js";
 
 
 Router.post('/signup', registerUser);
+Router.post('/google-signup', googleRegister);
 Router.post('/login', authUser);
 Router.post('/logout', logoutUser);
-Router.post('/signup-verified', registerUserOtpVerify);
+Router.post('/signup-verified', registerOtpVerifiedUser);
 Router.post('/forgot-password', forgotPassword);
 Router.post('/confirmResetPassword', confirmResetPW);
 

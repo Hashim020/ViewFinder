@@ -1,12 +1,15 @@
-import React, { useState, } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { toast } from 'react-toastify';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useRegisterMutation } from '../../Slices/userApiSlice.js';
-import GoogleButton from 'react-google-button';
 import { useDisclosure } from '@chakra-ui/react';
 import SignUpModal from '../../components/modal/SignUpModal.jsx';
 import { CircularProgress } from '@chakra-ui/react';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
+import { useGoogleRegisterMutation } from '../../Slices/userApiSlice';
+import { setCredentials } from '../../Slices/authSlice.js';
 
 const RegistrationPage = () => {
   const [name, setName] = useState("");
@@ -14,16 +17,16 @@ const RegistrationPage = () => {
   const [username, setUsername] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
-  const { userInfo } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const [register, { isLoading }] = useRegisterMutation();
+  const [googelLogin] = useGoogleRegisterMutation()
+
   const [additionalInfo, setAdditionalInfo] = useState({
     gender: "",
     birthdate: "",
     password: "",
     confirmPassword: ""
   });
-
-  const location = useLocation(); // Access location object
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -48,6 +51,43 @@ const RegistrationPage = () => {
       toast.error(err?.data?.message || err.error);
     }
   };
+
+  const { userInfo } = useSelector((state) => state.auth);
+  useEffect(() => {
+    if (userInfo) {
+      navigate('/Home ')
+    }
+  }, [navigate, userInfo]);
+
+  const googelAuth = async (data) => {
+    try {
+      console.log(data)
+      const {
+        email,
+        family_name: lastName,
+        given_name: firstName,
+        sub: googleId,
+        picture: profileImageURL,
+      } = data
+
+      const userData = {
+        firstName,
+        lastName,
+        email,
+        googleId,
+        profileImageName: profileImageURL,
+      }
+
+      const res = await googelLogin(userData).unwrap()
+      console.log(res)
+      dispatch(setCredentials({ ...res }))
+      navigate('/');
+
+    } catch (err) { }
+  }
+
+
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -90,9 +130,18 @@ const RegistrationPage = () => {
             <span className="font-normal text-gray-500">or signUp with</span>
             <span className="h-px bg-gray-400 w-14"></span>
           </div>
-          <div className="flex items-center justify-center">
-            <GoogleButton className="w-40" />
-          </div>
+          <GoogleOAuthProvider clientId="207507060713-rk0uhm6ocbq42rq7e1p5bsu7ov4ct1rh.apps.googleusercontent.com">
+            <GoogleLogin
+              onSuccess={credentialResponse => {
+                const decoded = jwtDecode(credentialResponse.credential);
+                console.log(decoded);
+                googelAuth(decoded);
+              }}
+              onError={() => {
+                console.log('Login Failed');
+              }}
+            />
+          </GoogleOAuthProvider>
         </form>
       </div>
       <SignUpModal isOpen={isOpen} onClose={onClose} handleSignUp={handleSignUp} />

@@ -1,8 +1,9 @@
 import asyncHandler from 'express-async-handler'
 import User from '../models/userModel.js'
 import generateToken from '../utils/generateToken.js'
-import nodemailer from 'nodemailer'
-import otpgenerator from 'otp-generator'
+import nodemailer from 'nodemailer';
+import otpgenerator from 'otp-generator';
+import { generateRandomUsername } from '../utils/utils.js';
 
 
 
@@ -50,7 +51,7 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new Error('Username already exists');
     }
 
-    // Generate OTP
+
     const otp = otpgenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
 
     const transporter = nodemailer.createTransport({
@@ -88,10 +89,10 @@ const registerUser = asyncHandler(async (req, res) => {
 // route POST /api/users
 // @access public
 
-const registerUserOtpVerify = asyncHandler(async (req, res) => {
+const registerOtpVerifiedUser = asyncHandler(async (req, res) => {
     const { name, email, password, gender, username, birthdate } = req.body;
 
-    // Check if user already exists
+
     const userExists = await User.findOne({ email });
 
     if (userExists) {
@@ -99,7 +100,7 @@ const registerUserOtpVerify = asyncHandler(async (req, res) => {
         throw new Error('User already exists');
     }
 
-    // Create a new user with provided data
+
     const user = await User.create({
         name,
         email,
@@ -125,6 +126,55 @@ const registerUserOtpVerify = asyncHandler(async (req, res) => {
         throw new Error('Invalid user data');
     }
 });
+
+
+
+const googleRegister = asyncHandler(async (req, res) => {
+    const { firstName, lastName, email, profileImageName } = req.body;
+    const NAME = firstName + lastName;
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+        generateToken(res, userExists._id);
+        console.log("kjasjdkfffffffffffff");
+        res.status(201).json({
+            _id: userExists._id,
+            name: userExists.name,
+            email: userExists.email,
+            profileImageName: profileImageName,
+        });
+    } else {
+        let userName = generateRandomUsername(NAME);
+        let userNameExist = await User.findOne({ userName });
+        console.log("kkkkkkkkkk");
+
+        while (userNameExist) {
+            userName = generateRandomUsername(NAME);
+            userNameExist = await User.findOne({ userName });
+        }
+        const user = await User.create({
+            name: NAME,
+            email: email,
+            password: NAME,
+            username: userName,
+            profileImageName: profileImageName,
+            isVerified: true,
+        });
+
+        if (user) {
+            generateToken(res, user._id);
+            res.status(201).json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                profileImageName: user.profileImageName,
+            });
+        } else {
+            res.status(400);
+            throw new Error("Invalid user data");
+        }
+    }
+});
+
 
 
 
@@ -237,16 +287,16 @@ const forgotPassword = asyncHandler(async (req, res) => {
 const confirmResetPW = asyncHandler(async (req, res) => {
     const { email, newPassword } = req.body;
 
-    // Find the user by email
+
     const user = await User.findOne({ email });
 
-    // If user not found, return error
+
     if (!user) {
         res.status(404);
         throw new Error('User not found');
     }
 
-    // Update the user's password
+
     user.password = newPassword;
     await user.save();
 
@@ -260,7 +310,8 @@ const confirmResetPW = asyncHandler(async (req, res) => {
 export {
     authUser,
     registerUser,
-    registerUserOtpVerify,
+    registerOtpVerifiedUser,
+    googleRegister,
     logoutUser,
     getUserProfile,
     updateUserProfile,
