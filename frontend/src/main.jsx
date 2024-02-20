@@ -7,9 +7,9 @@ import {
   RouterProvider
 } from 'react-router-dom'
 import store from './store.js'
-import { Provider } from 'react-redux'
-import App from './App.jsx'
-import './index.css'
+import { Provider } from 'react-redux';
+import App from './App.jsx';
+import './index.css';
 
 //user Components
 import PrivateRoute from './components/PrivateRoute.jsx';
@@ -19,12 +19,14 @@ import ForgotPassword from './pages/userPages/ForgotPassword.jsx';
 import VerifyOtpReg from './pages/userPages/VerifyOtpReg.jsx';
 import ConfirmResetPW from './pages/userPages/ConfirmResetPW.jsx';
 import HomePage from './pages/userPages/HomePage.jsx';
-import ProfilePage from './pages/userPages/ProfilePage.jsx'
-
+import ProfilePage from './pages/userPages/ProfilePage.jsx';
 // admin Components
-
 import AdminLoginPage from './pages/adminPages/AdminLoginPage.jsx';
-import UserManagementScreen from './pages/adminPages/UserManagementScreen.jsx'
+import AdminHome from './pages/adminPages/AdminHome.jsx';
+import AdminUserManagement from './pages/adminPages/AdminUserManagement.jsx';
+
+
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -40,11 +42,9 @@ const router = createBrowserRouter(
       <Route path='/myProfile' element={<ProfilePage />} />
       </Route>
       {/* Admin Route */}
-      <Route path='/adminLogin' element={<AdminLoginPage />} />
-      <Route path='/admin/get-user' element={<UserManagementScreen />} />
-      
-      
-
+      <Route path='/admin' element={<AdminLoginPage />} />
+      <Route path='/admin/Home' element={<AdminHome />} />
+      <Route path='/admin/user-management' element={<AdminUserManagement />} />
     </Route>
   )
 )

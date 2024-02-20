@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch,useSelector } from 'react-redux';
 import { useAdminLoginMutation } from '../../Slices/adminApiSlice';
-import { setCredentials } from '../../slices/adminAuthSlice';
+import { setCredentials } from '../../Slices/adminAuthSlice'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -14,13 +14,23 @@ const AdminLoginPage = () => {
   const navigate = useNavigate();
   const [login] = useAdminLoginMutation();
 
+  const { adminInfo } = useSelector((state) => state.adminAuth);
+
+  useEffect(() => {
+    if (adminInfo) {
+      navigate('/admin/Home');
+    }else{
+      navigate('/admin')
+    }
+  }, [adminInfo, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       const response = await login({ email, password }).unwrap();
       dispatch(setCredentials(response));
-      navigate('/admin/get-user');
+      navigate('/admin/Home');
     } catch (error) {
       toast.error('An error occurred. Please try again.');
       setIsLoading(false);
