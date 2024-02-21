@@ -1,6 +1,9 @@
 import Express from "express";
 import dotenv from "dotenv";
 import cors from "cors"; 
+import cookieParser from "cookie-parser";
+
+
 
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import connectDB from "./config/db.js";
@@ -15,7 +18,7 @@ const app = Express();
 
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
-
+app.use(cookieParser());
 
 app.use(cors());
 

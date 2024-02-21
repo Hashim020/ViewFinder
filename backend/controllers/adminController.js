@@ -55,7 +55,9 @@ const adminRegister = AsyncHandler(async (req, res) => {
         res.status(400);
         throw new Error('Invalid user data')
     }
-})
+});
+
+
 
 //@desc LogOut user/set token
 // route POST /api/admin/Logout
@@ -76,7 +78,8 @@ const logoutAdmin = AsyncHandler(async (req, res) => {
 //@access Private
 
 const getAllUser = AsyncHandler(async (req, res) => {
-    const userData = await User.find({}, { name: 1, email: 1, profileImage: 1 });
+    const userData = await User.find({});
+
     if (userData) {
         res.status(200).json(userData);
     } else {
@@ -86,79 +89,24 @@ const getAllUser = AsyncHandler(async (req, res) => {
 });
 
 
-//@desc Auth admin/UPDATEUSER
-//route PUT /api/admin/update-user
+//@desc Auth admin/Add User
+//route DELETE /api/admin/add-user
 //@access Private
 
-const updateUserData = AsyncHandler(async (req, res) => {
-    const userId = req.body.userId;
+
+
+const blockUnblockUser = AsyncHandler(async (req, res) => {
+    const { userId } = req.body;
+    if (!userId) return res.status(400).json({ success: false, message: 'User ID is required' });
+
     const user = await User.findById(userId);
-    if (user) {
-        user.name = req.body.name || user.name;
-        user.email = req.body.email || user.email;
-        const updateUser = await user.save();
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
-        res.status(200).json({
-            _id: updateUser._id,
-            name: updateUser.name,
-            email: updateUser.email,
-        });
-    } else {
-        res.status(400);
-        throw new Error("user not found");
-    }
+    user.isBlocked = !user.isBlocked;
+    await user.save();
+
+    res.status(200).json({ success: true, message: `User ${user.isBlocked ? 'blocked' : 'unblocked'} successfully` });
 });
-
-
-//@desc Auth admin/Delete User
-//route DELETE /api/admin/delete-user
-//@access Private
-
-const deleteUser = AsyncHandler(async (req, res) => {
-    const userId = req.body.userId;
-    const deleted = await User.findByIdAndDelete(userId);
-  
-    if (deleted) {
-      res
-        .status(200)
-        .json({ success: true, message: "User Deleted Succesfully" });
-    } else {
-      res.status(404).json({ success: false, message: "USER delete Failed" });
-    }
-  });
-  
-  //@desc Auth admin/Add User
-  //route DELETE /api/admin/add-user
-  //@access Private
-  
-  const addNewUser = AsyncHandler(async (req, res) => {
-    const { name, email, password } = req.body;
-    const userExist = await User.findOne({ email });
-    if (userExist) {
-      res.status(400);
-  
-      throw new Error("User alredy exists");
-    } else {
-      const user = await User.create({
-        name,
-        email,
-        password,
-      });
-      if (user) {
-        res.status(201).json({
-          _id: user.id,
-          name: user.name,
-          email: user.email,
-        });
-      } else {
-        res.status(400);
-        throw new Error("Invalid user data");
-      }
-    }
-  });
- 
-  
-
 
 
 
@@ -173,7 +121,5 @@ export {
     adminRegister,
     logoutAdmin,
     getAllUser,
-    updateUserData,
-    deleteUser,
-    addNewUser,
+    blockUnblockUser,
 }

@@ -3,6 +3,16 @@ import { Sidebar } from 'flowbite-react';
 import { FaHome, FaSearch, FaEnvelope, FaBell, FaEdit, FaTrophy, FaUser, FaEllipsisH,FaChartBar  } from 'react-icons/fa';
 import Logo from "../../assets/Logo.png";
 import { Link } from 'react-router-dom';
+import SidBarModal from '../modal/adminModal/SidBarModal';
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Button, useDisclosure } from '@chakra-ui/react';
+
+const overlayOneContent = (
+  <ModalOverlay
+      bg='blackAlpha.300'
+      backdropFilter='blur(10px) hue-rotate(90deg)'
+      backdropBlur='2px'
+  />
+);
 
 const SidebarComponent = ({ items }) => {
   return (
@@ -15,7 +25,7 @@ const SidebarComponent = ({ items }) => {
           {items.map((item, index) => (
             <Sidebar.ItemGroup key={index} className='mt-0'> {/* Added key to Sidebar.ItemGroup */}
               <Link to={item.href}>
-                <Sidebar.Item href={item.href} icon={item.icon} className="text-white px-9 py-4 flex items-center justify-start hover:bg-sky-950">
+                <Sidebar.Item href={item.href} icon={item.icon} className="text-white px-2 py-4 flex items-center justify-start hover:bg-sky-950">
                   {item.label}
                 </Sidebar.Item>
               </Link>
@@ -23,6 +33,7 @@ const SidebarComponent = ({ items }) => {
           ))}
         </Sidebar.Items>
       </Sidebar>
+      <SidBarModal overlayOneContent={overlayOneContent}  />
     </div>
   );
 };
@@ -34,7 +45,6 @@ const SideBar = () => {
     { href: '/post-management', icon: FaEnvelope, label: 'Post Management' },
     { href: '/contest-management', icon: FaTrophy, label: 'Contest Management' },
     { href: '/reports', icon: FaChartBar, label: 'Reports' },
-    { href: '#', icon: FaEllipsisH, label: 'More' },
   ];
 
   return <SidebarComponent items={sidebarItems} />;

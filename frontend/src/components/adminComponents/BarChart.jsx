@@ -15,10 +15,10 @@ const BarChart = () => {
     chartInstance.current = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         datasets: [{
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
+          label: 'Sales Data', // Update the label as needed
+          data: [100, 150, 200, 180, 220, 250, 300, 280, 270, 320, 350, 400], // Replace with your specific data for each month
           backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
             'rgba(54, 162, 235, 0.2)',
@@ -46,6 +46,7 @@ const BarChart = () => {
         }
       }
     });
+    
 
     return () => {
       if (chartInstance.current) {

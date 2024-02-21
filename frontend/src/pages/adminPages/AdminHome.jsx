@@ -22,7 +22,7 @@ const HomePage = () => {
         <AdminSideBar />
       </div>
       <div className="flex-1 h-full bg-white p-3 rounded-md shadow-md w-1/3">
-        <h2 className="text-lg font-semibold mb-2">Chart Title</h2>
+        <h2 className="text-lg font-semibold mb-2">Post OverView</h2>
         <div className="overflow-hidden">
           <BarChart />
         </div>

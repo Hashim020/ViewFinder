@@ -4,7 +4,7 @@ import  asyncHandler from 'express-async-handler'
 const protect=asyncHandler(async(req,res,next)=>{
     let token;
     token=req.cookies.jwtAdmin
-    // console.log("token",token);
+    
 
     if(token){
         try {

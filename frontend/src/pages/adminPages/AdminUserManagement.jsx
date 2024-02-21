@@ -1,129 +1,96 @@
+import React, { useEffect, useState } from 'react';
 import AdminSideBar from '../../components/adminComponents/AdminSideBar';
-import { useState } from 'react';
-
+import { useGetUserDataMutation } from '../../Slices/adminApiSlice';
+import { useBlockUnblockUserMutation } from '../../Slices/adminApiSlice';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { CircularProgress } from '@chakra-ui/react';
 const AdminUserManagement = () => {
-    const users = [
-        {
-            _id: 1,
-            name: "John Doe",
-            email: "john@example.com",
-            gender: "male",
-            username: "johndoe",
-            birthdate: "1990-01-01",
-            profileImageName: "john_profile.jpg",
-            isBlocked: false,
-        },
-        {
-            _id: 2,
-            name: "Jane Smith",
-            email: "jane@example.com",
-            gender: "female",
-            username: "janesmith",
-            birthdate: "1992-05-15",
-            profileImageName: "jane_profile.jpg",
-            isBlocked: true,
-        },
-        {
-            _id: 3,
-            name: "Michael Johnson",
-            email: "michael@example.com",
-            gender: "male",
-            username: "michaelj",
-            birthdate: "1985-08-20",
-            profileImageName: "michael_profile.jpg",
-            isBlocked: false,
-        },
-        {
-            _id: 4,
-            name: "Emily Brown",
-            email: "emily@example.com",
-            gender: "female",
-            username: "emilyb",
-            birthdate: "1993-11-10",
-            profileImageName: "emily_profile.jpg",
-            isBlocked: false,
-        },
-        {
-            _id: 5,
-            name: "David Wilson",
-            email: "david@example.com",
-            gender: "male",
-            username: "davidw",
-            birthdate: "1988-04-25",
-            profileImageName: "david_profile.jpg",
-            isBlocked: true,
-        },
-        {
-            _id: 6,
-            name: "Sarah Johnson",
-            email: "sarah@example.com",
-            gender: "female",
-            username: "sarahj",
-            birthdate: "1991-09-30",
-            profileImageName: "sarah_profile.jpg",
-            isBlocked: false,
-        },
-        {
-            _id: 7,
-            name: "Christopher Lee",
-            email: "chris@example.com",
-            gender: "male",
-            username: "chrisl",
-            birthdate: "1987-02-15",
-            profileImageName: "chris_profile.jpg",
-            isBlocked: false,
-        },
-        {
-            _id: 8,
-            name: "Amanda Taylor",
-            email: "amanda@example.com",
-            gender: "female",
-            username: "amandat",
-            birthdate: "1990-06-05",
-            profileImageName: "amanda_profile.jpg",
-            isBlocked: true,
-        },
-        {
-            _id: 9,
-            name: "Daniel Martinez",
-            email: "daniel@example.com",
-            gender: "male",
-            username: "danm",
-            birthdate: "1989-03-12",
-            profileImageName: "daniel_profile.jpg",
-            isBlocked: false,
-        },
-        {
-            _id: 10,
-            name: "Jessica Adams",
-            email: "jessica@example.com",
-            gender: "female",
-            username: "jessa",
-            birthdate: "1994-07-20",
-            profileImageName: "jessica_profile.jpg",
-            isBlocked: false,
-        },
-    ];
-    
+    const [refetch, setRefetch] = useState(false);
+    let [fetchedData, setfetchedData] = useState([]);
 
+    const navigate = useNavigate()
+    const { adminInfo } = useSelector((state) => state.adminAuth);
+
+    useEffect(() => {
+        if (adminInfo) {
+            navigate('/admin/user-management');
+        } else {
+            navigate('/admin')
+        }
+    }, [adminInfo, navigate]);
+
+
+
+    const [userDataFromApi, { isLoading }] = useGetUserDataMutation();
+    useEffect(() => {
+
+        try {
+
+            const fetchData = async () => {
+                const responseFromApiCall = await userDataFromApi();
+                const usersArray = responseFromApiCall.data;
+                console.log(usersArray);
+                setfetchedData(usersArray)
+            };
+            fetchData();
+        } catch (error) {
+            toast.error(error);
+            console.error("Error fetching users:", error);
+
+        }
+
+    }, [refetch]);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const recordsPerPage = 7;
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleSearch = (event) => {
         setSearchTerm(event.target.value);
+        setCurrentPage(1);
     };
 
-    const filteredUsers = users.filter(user =>
+    const indexOfLastRecord = currentPage * recordsPerPage;
+    const indexOfUsersDataRecord = indexOfLastRecord - recordsPerPage;
+    const filteredUsers = fetchedData.filter(user =>
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    const currentRecords = filteredUsers.slice(indexOfUsersDataRecord, indexOfLastRecord);
 
+    const totalPages = Math.ceil(filteredUsers.length / recordsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const [blockUnblockUser, { isLoading1, isError, isSuccess, error }] = useBlockUnblockUserMutation();
+
+    const handleBlockUser = async (userId) => {
+        try {
+            const data = { userId };
+            const response = await blockUnblockUser(data);
+            setfetchedData(prevData => {
+                return prevData.map(user => {
+                    if (user._id === userId) {
+                        return { ...user, isBlocked: !user.isBlocked };
+                    }
+                    return user;
+                });
+            });
+            console.log('User block/unblock successful:', response);
+        } catch (err) {
+            console.error('Error blocking/unblocking user:', err);
+        }
+    };
     return (
-        <div style={{ display: 'flex', height: '100vh' }}>
-            <div style={{ flex: '0 0 auto', width: '250px', height: '100%', backgroundColor: '#f0f0f0' }}>
+        <div className="flex h-screen">
+            <div className="flex-none w-64 h-full bg-gray-200">
                 <AdminSideBar />
             </div>
-            <div className="px-3 py-14 flex-1 h-full bg-white">
+            <div className="flex-1 px-3 py-15 bg-white">
                 <h2 className="text-xl font-semibold mb-4">User Management</h2>
                 <div className="mb-4">
                     <input
@@ -134,75 +101,73 @@ const AdminUserManagement = () => {
                         onChange={handleSearch}
                     />
                 </div>
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <div className="relative border-spacing-2 overflow-x-auto shadow-md rounded-lg">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <thead>
                             <tr>
-                                <th scope="col" className="px-6 py-3">
-                                    Profile Image
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Username
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Name
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Email
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Gender
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Birthdate
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Status
-                                </th>
-                                <th scope="col" className="px-6 py-3">
-                                    Action
-                                </th>
+                                <th className="py-3 px-3">Profile Image</th>
+                                <th className="py-3 px-3">Username</th>
+                                <th className="py-3 px-3">Name</th>
+                                <th className="py-3 px-3">Email</th>
+                                <th className="py-3 px-3">Gender</th>
+                                <th className="py-3 px-3">Birthdate</th>
+                                <th className="py-3 px-3">Status</th>
+                                <th className="py-3 px-3">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredUsers.map(user => (
-                                <tr key={user._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                    <td className="px-6 py-4">
-                                        {user.profileImageName && (
-                                            <img src={`path_to_images/${user.profileImageName}`} alt={user.name} className="w-10 h-10 rounded-full" />
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {user.username}
-                                    </td>
-                                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {user.name}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {user.email}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {user.gender}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {user.birthdate && new Date(user.birthdate).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {user.isBlocked ? "Blocked" : "Active"}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <button onClick={() => handleBlockUser(user._id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                                            {user.isBlocked ? "Unblock" : "Block"}
-                                        </button>
-                                    </td>
+                            {currentRecords.map(user => (
+                                <tr key={user._id}>
+                                    <td className="py-3 px-8">{user.profileImageName && <img src={`${user.profileImageName}`} alt={user.name} className="w-10 h-10 rounded-full" />}</td>
+                                    <td className="py-3 px-3">{user.username}</td>
+                                    <td className="py-3 px-3">{user.name}</td>
+                                    <td className="py-3 px-3">{user.email}</td>
+                                    <td className="py-3 px-3">{user.gender}</td>
+                                    <td className="py-3 px-3">{user.birthdate && new Date(user.birthdate).toLocaleDateString()}</td>
+                                    <td className="py-3 px-3">{user.isBlocked ? "Blocked" : "Active"}</td>
+                                    <td className="py-3 px-3"><button onClick={() => handleBlockUser(user._id)} className="px-3 py-1 bg-blue-500 text-white rounded-md">{user.isBlocked ? "Unblock" : "Block"}</button></td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+                    <nav className="mt-4 pb-1 pl-2 flex justify-end">
+                        <ul className="flex">
+                            <li>
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className={`px-3 py-1 ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-md mr-2`}
+                                >
+                                    Prev
+                                </button>
+                            </li>
+                            {Array.from({ length: totalPages }).map((_, index) => (
+                                <li key={index}>
+                                    <button
+                                        onClick={() => handlePageChange(index + 1)}
+                                        disabled={currentPage === index + 1}
+                                        className={`px-3 py-1 ${currentPage === index + 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-md mr-2`}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                </li>
+                            ))}
+                            <li>
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className={`px-3 py-1 ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-md`}
+                                >
+                                    Next
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
     );
-}
 
-export default AdminUserManagement;
+};
+
+export default AdminUserManagement; 

@@ -9,17 +9,15 @@ import {
     adminRegister,
     logoutAdmin,
     getAllUser,
-    updateUserData,
-    deleteUser,
-    addNewUser
+    blockUnblockUser
 } from "../controllers/adminController.js";
+
+
 router.post('/', adminRegister);
 router.post('/auth', authAdmin);
 router.post('/logout',logoutAdmin);
 router.post('/get-user',protect,getAllUser);
-router.put('/update-user',protect,updateUserData);
-router.delete('/delete-user',protect,deleteUser);
-router.post('/add-user',protect,addNewUser);
+router.post('/userBlockUnblock',protect,blockUnblockUser);
 
 
 

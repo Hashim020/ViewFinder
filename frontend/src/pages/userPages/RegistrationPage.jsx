@@ -55,7 +55,7 @@ const RegistrationPage = () => {
   const { userInfo } = useSelector((state) => state.auth);
   useEffect(() => {
     if (userInfo) {
-      navigate('/Home ')
+      navigate('/Home')
     }
   }, [navigate, userInfo]);
 
