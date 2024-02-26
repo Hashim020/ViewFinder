@@ -9,7 +9,8 @@ import {
     adminRegister,
     logoutAdmin,
     getAllUser,
-    blockUnblockUser
+    blockUnblockUser,
+    pagination
 } from "../controllers/adminController.js";
 
 
@@ -18,6 +19,7 @@ router.post('/auth', authAdmin);
 router.post('/logout',logoutAdmin);
 router.post('/get-user',protect,getAllUser);
 router.post('/userBlockUnblock',protect,blockUnblockUser);
+router.get('/users-pagenationcall',protect,pagination);
 
 
 

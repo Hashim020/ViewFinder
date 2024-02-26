@@ -109,6 +109,21 @@ const blockUnblockUser = AsyncHandler(async (req, res) => {
 });
 
 
+const pagination = async (req, res) => {
+    try {
+        const { page, perPage } = req.query;
+        const skip = (parseInt(page) - 1) * parseInt(perPage);
+        const users = await User.find().skip(skip).limit(parseInt(perPage));
+        const totalCount = await User.countDocuments(); 
+        const totalPages = Math.ceil(totalCount / parseInt(perPage)); 
+        res.json({ users, totalPages }); 
+        console.log("hi");
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
 
 
 
@@ -122,4 +137,5 @@ export {
     logoutAdmin,
     getAllUser,
     blockUnblockUser,
+    pagination
 }

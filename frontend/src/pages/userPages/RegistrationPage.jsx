@@ -4,12 +4,12 @@ import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRegisterMutation } from '../../Slices/userApiSlice.js';
 import { useDisclosure } from '@chakra-ui/react';
-import SignUpModal from '../../components/modal/SignUpModal.jsx';
 import { CircularProgress } from '@chakra-ui/react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import { useGoogleRegisterMutation } from '../../Slices/userApiSlice';
 import { setCredentials } from '../../Slices/authSlice.js';
+import SignUpModal from '../../components/modal/userModal/SignUpModal.jsx';
 
 const RegistrationPage = () => {
   const [name, setName] = useState("");

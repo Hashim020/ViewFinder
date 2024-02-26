@@ -26,6 +26,7 @@ export const adminApiSlice = createApi({
         body: data,
       }),
     }),
+    
     // New endpoint for user block/unblock
     blockUnblockUser: builder.mutation({
       query: (data) => ({
@@ -38,8 +39,10 @@ export const adminApiSlice = createApi({
 });
 
 export const {
+  reducer: adminApiReducer,
+  middleware: adminApiMiddleware,
   useAdminLoginMutation,
   useAdminLogoutMutation,
   useGetUserDataMutation,
-  useBlockUnblockUserMutation, // New mutation hook for user block/unblock
+  useBlockUnblockUserMutation,
 } = adminApiSlice;

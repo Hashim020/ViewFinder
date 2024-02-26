@@ -31,6 +31,20 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        getUserProfile: builder.mutation({
+            query: (data) => ({
+                url: `${USER_URL}/profile`,
+                method: 'GET',
+                body: data,
+            }),
+        }),
+        updateUserProfile: builder.mutation({
+            query: (data) => ({
+                url: `${USER_URL}/profile`,
+                method: 'PUT',
+                body: data,
+            }),
+        }),
     })
 })
 
@@ -40,4 +54,6 @@ export const {
     useRegisterMutation,
     useRegisterOtpVarifiedMutation,
     useGoogleRegisterMutation,
+    useGetUserProfileMutation,
+    useUpdateUserProfileMutation,
 } = usersApiSlice;

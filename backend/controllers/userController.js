@@ -16,6 +16,11 @@ const authUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
+        if (user.isBlocked) {
+            res.status(401).json({ message: 'User is blocked' });
+            return;
+        }
+
         generateToken(res, user._id);
 
         res.json({
@@ -24,10 +29,10 @@ const authUser = asyncHandler(async (req, res) => {
             email: user.email,
         });
     } else {
-        res.status(401);
-        throw new Error('Invalid email or password');
+        res.status(401).json({ message: 'Invalid email or password' });
     }
 });
+
 
 
 
@@ -198,15 +203,17 @@ const logoutUser = asyncHandler(async (req, res) => {
 // route get /api/users/profile
 // @access private
 const getUserProfile = asyncHandler(async (req, res) => {
-    const USER = await User.findById(req.user._id)
-    const user = {
-        _id: req.user._id,
-        name: req.user.name,
-        email: req.user.email,
-        profileImage: req.user.profileImage,
-    };
-    res.status(200).json(user)
-})
+    try {
+        const user = await User.findById(req.user._id, { password: 0 });
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
 
 
 
@@ -214,30 +221,46 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // route POST /api/users/auth
 // @access public
 const updateUserProfile = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id)
+    const user = await User.findById(req.user._id);
+
     if (user) {
-        user.name = req.body.name || user.name
-        user.email = req.body.email || user.email
+        if (req.body.name) {
+            user.name = req.body.name;
+        }
+        if (req.body.email) {
+            user.email = req.body.email;
+        }
         if (req.body.password) {
-            user.password = req.body.password
+            user.password = req.body.password;
+        }
+        if (req.file) {
+            user.profileImageName = req.file.filename;
+        }
+        if (req.body.gender) {
+            user.gender = req.body.gender;
+        }
+        if (req.body.dateOfBirth) {
+            user.birthdate = req.body.dateOfBirth;
         }
 
-        if (req.file) {
-            user.profileImage = req.file.filename || user.profileImage
-        }
-        const updatedUser = await user.save()
+        const updatedUser = await user.save();
 
         res.status(200).json({
             _id: updatedUser._id,
             name: updatedUser.name,
             email: updatedUser.email,
-            profileImage: updatedUser.profileImage,
+            profileImageName: updatedUser.profileImageName,
+            gender: updatedUser.gender,
+            dateOfBirth: updatedUser.birthdate,
+            success:"true",
         });
     } else {
-        res.status(400)
-        throw new Error('User not found')
+        res.status(400);
+        throw new Error('User not found');
     }
-})
+});
+
+
 
 const forgotPassword = asyncHandler(async (req, res) => {
     const { email } = req.body;
@@ -316,7 +339,7 @@ export {
     getUserProfile,
     updateUserProfile,
     forgotPassword,
-    confirmResetPW
+    confirmResetPW,
 }
 
 

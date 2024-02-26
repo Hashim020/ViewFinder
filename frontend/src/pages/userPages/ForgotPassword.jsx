@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
+import { Otptimer } from "otp-timer-ts";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
@@ -10,23 +10,23 @@ const ForgotPasswordPage = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
-  const [emaildOTP,setemaildOTP]= useState("")
+  const [emaildOTP, setemaildOTP] = useState("");
+  const [showResend, setshowResend] = useState("false")
 
-  const navigate= useNavigate();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage(null);
-
     try {
       const response = await axios.post('http://localhost:5000/api/user/forgot-password', { email });
-      console.log(response.data);
       setIsOtpSent(true);
       toast.success("OTP sent successfully. Please check your email.");
-      const data=response.data;
-      var OTP= data.otp
-      setemaildOTP(OTP)
+      setshowResend("true")
+      const data = response.data;
+      var OTP = data.otp
+      setemaildOTP(OTP);
     } catch (error) {
       console.error('Error:', error.response.data.message);
       setErrorMessage(error.response.data.message);
@@ -34,14 +34,29 @@ const ForgotPasswordPage = () => {
       setIsLoading(false);
     }
   };
+  const handleResend =  async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.post('http://localhost:5000/api/user/forgot-password', { email });
+      const data = response.data;
+      var OTP = data.otp
+      setemaildOTP(OTP)
+      setIsOtpSent(true);
+      toast.success("OTP resent successfully. Please check your email.");
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if(emaildOTP  ==otp){
+    if (emaildOTP == otp) {
       toast.success("otp is valid")
       navigate('/confirmResetPassword');
     }
-    if(emaildOTP!=otp){
+    if (emaildOTP != otp) {
       toast.error("Invalid OTP")
     }
   };
@@ -67,6 +82,9 @@ const ForgotPasswordPage = () => {
               {isLoading ? 'Sending...' : isOtpSent ? 'Verify OTP' : 'Send OTP'}
             </button>
           </div>
+          {showResend == "true" && (
+            <Otptimer minutes={0} seconds={30} onResend={handleResend} />
+          )}
           {errorMessage && (
             <p className="text-sm font-semibold text-red-500">{errorMessage}</p>
           )}

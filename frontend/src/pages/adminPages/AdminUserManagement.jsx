@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import AdminSideBar from '../../components/adminComponents/AdminSideBar';
-import { useGetUserDataMutation } from '../../Slices/adminApiSlice';
 import { useBlockUnblockUserMutation } from '../../Slices/adminApiSlice';
-import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { CircularProgress } from '@chakra-ui/react';
-const AdminUserManagement = () => {
-    const [refetch, setRefetch] = useState(false);
-    let [fetchedData, setfetchedData] = useState([]);
+import { useSelector } from 'react-redux';
 
-    const navigate = useNavigate()
+const AdminUserManagement = () => {
+    const [fetchedData, setFetchedData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const recordsPerPage = 13;
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedGender, setSelectedGender] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState('');
+
+    const [blockUnblockUser] = useBlockUnblockUserMutation();
+    const navigate = useNavigate();
     const { adminInfo } = useSelector((state) => state.adminAuth);
 
     useEffect(() => {
@@ -20,59 +27,26 @@ const AdminUserManagement = () => {
         }
     }, [adminInfo, navigate]);
 
-
-
-    const [userDataFromApi, { isLoading }] = useGetUserDataMutation();
     useEffect(() => {
+        fetchData(currentPage);
+    }, [currentPage, selectedGender, selectedStatus]);
 
+    const fetchData = async (page) => {
         try {
-
-            const fetchData = async () => {
-                const responseFromApiCall = await userDataFromApi();
-                const usersArray = responseFromApiCall.data;
-                console.log(usersArray);
-                setfetchedData(usersArray)
-            };
-            fetchData();
+            const response = await axios.get(`/api/admin/users-pagenationcall?page=${page}&perPage=${recordsPerPage}`);
+            setFetchedData(response.data.users);
+            setTotalPages(response.data.totalPages);
         } catch (error) {
-            toast.error(error);
             console.error("Error fetching users:", error);
-
         }
-
-    }, [refetch]);
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const recordsPerPage = 7;
-    const [searchTerm, setSearchTerm] = useState('');
-
-    const handleSearch = (event) => {
-        setSearchTerm(event.target.value);
-        setCurrentPage(1);
     };
-
-    const indexOfLastRecord = currentPage * recordsPerPage;
-    const indexOfUsersDataRecord = indexOfLastRecord - recordsPerPage;
-    const filteredUsers = fetchedData.filter(user =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.username.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    const currentRecords = filteredUsers.slice(indexOfUsersDataRecord, indexOfLastRecord);
-
-    const totalPages = Math.ceil(filteredUsers.length / recordsPerPage);
-
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
-
-    const [blockUnblockUser, { isLoading1, isError, isSuccess, error }] = useBlockUnblockUserMutation();
 
     const handleBlockUser = async (userId) => {
         try {
             const data = { userId };
             const response = await blockUnblockUser(data);
-            setfetchedData(prevData => {
+            toast.success("Action Applied");
+            setFetchedData(prevData => {
                 return prevData.map(user => {
                     if (user._id === userId) {
                         return { ...user, isBlocked: !user.isBlocked };
@@ -85,6 +59,21 @@ const AdminUserManagement = () => {
             console.error('Error blocking/unblocking user:', err);
         }
     };
+
+    const handleSearch = (event) => {
+        setSearchTerm(event.target.value);
+        setCurrentPage(1);
+    
+        if (!fetchedData.some(user => user.username.toLowerCase().includes(searchTerm.toLowerCase()))) {
+            toast.info("No users found");
+        }
+    };
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+    
+
     return (
         <div className="flex h-screen">
             <div className="flex-none w-64 h-full bg-gray-200">
@@ -102,6 +91,30 @@ const AdminUserManagement = () => {
                     />
                 </div>
                 <div className="relative border-spacing-2 overflow-x-auto shadow-md rounded-lg">
+                    <div className="flex justify-start  mt-4">
+                        <div className="mr-4">
+                            <select
+                                value={selectedGender}
+                                onChange={(e) => setSelectedGender(e.target.value)}
+                                className="px-2 py-1 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                            >
+                                <option value="">All Genders</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select
+                                value={selectedStatus}
+                                onChange={(e) => setSelectedStatus(e.target.value)}
+                                className="px-2 py-1 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                            >
+                                <option value="">All Statuses</option>
+                                <option value="Active">Active</option>
+                                <option value="Blocked">Blocked</option>
+                            </select>
+                        </div>
+                    </div>
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead>
                             <tr>
@@ -116,46 +129,51 @@ const AdminUserManagement = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {currentRecords.map(user => (
-                                <tr key={user._id}>
-                                    <td className="py-3 px-8">{user.profileImageName && <img src={`${user.profileImageName}`} alt={user.name} className="w-10 h-10 rounded-full" />}</td>
-                                    <td className="py-3 px-3">{user.username}</td>
-                                    <td className="py-3 px-3">{user.name}</td>
-                                    <td className="py-3 px-3">{user.email}</td>
-                                    <td className="py-3 px-3">{user.gender}</td>
-                                    <td className="py-3 px-3">{user.birthdate && new Date(user.birthdate).toLocaleDateString()}</td>
-                                    <td className="py-3 px-3">{user.isBlocked ? "Blocked" : "Active"}</td>
-                                    <td className="py-3 px-3"><button onClick={() => handleBlockUser(user._id)} className="px-3 py-1 bg-blue-500 text-white rounded-md">{user.isBlocked ? "Unblock" : "Block"}</button></td>
-                                </tr>
-                            ))}
+                            {fetchedData
+                                .filter(user => (
+                                    (!searchTerm || user.username.toLowerCase().includes(searchTerm.toLowerCase())) &&
+                                    (!selectedGender || user.gender === selectedGender) &&
+                                    (!selectedStatus || (user.isBlocked ? "Blocked" : "Active") === selectedStatus)
+                                ))
+                                .map(user => (
+                                    <tr key={user._id}>
+                                        <td className="py-3 px-8">{user.profileImageName && <img src={`${user.profileImageName}`} alt={user.name} className="w-10 h-10 rounded-full" />}</td>
+                                        <td className="py-3 px-3">{user.username}</td>
+                                        <td className="py-3 px-3">{user.name}</td>
+                                        <td className="py-3 px-3">{user.email}</td>
+                                        <td className="py-3 px-3">{user.gender}</td>
+                                        <td className="py-3 px-3">{user.birthdate && new Date(user.birthdate).toLocaleDateString()}</td>
+                                        <td className="py-3 px-3">{user.isBlocked ? "Blocked" : "Active"}</td>
+                                        <td className="py-3 px-3"><button onClick={() => handleBlockUser(user._id)} className="px-3 py-1 bg-blue-500 text-white rounded-md">{user.isBlocked ? "Unblock" : "Block"}</button></td>
+                                    </tr>
+                                ))}
                         </tbody>
                     </table>
                     <nav className="mt-4 pb-1 pl-2 flex justify-end">
                         <ul className="flex">
                             <li>
                                 <button
-                                    onClick={() => handlePageChange(currentPage - 1)}
                                     disabled={currentPage === 1}
+                                    onClick={() => handlePageChange(currentPage - 1)}
                                     className={`px-3 py-1 ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-md mr-2`}
                                 >
                                     Prev
                                 </button>
                             </li>
-                            {Array.from({ length: totalPages }).map((_, index) => (
-                                <li key={index}>
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <li key={i + 1}>
                                     <button
-                                        onClick={() => handlePageChange(index + 1)}
-                                        disabled={currentPage === index + 1}
-                                        className={`px-3 py-1 ${currentPage === index + 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-md mr-2`}
+                                        onClick={() => handlePageChange(i + 1)}
+                                        className={`px-3 py-1 ${currentPage === i + 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-md mr-2`}
                                     >
-                                        {index + 1}
+                                        {i + 1}
                                     </button>
                                 </li>
                             ))}
                             <li>
                                 <button
-                                    onClick={() => handlePageChange(currentPage + 1)}
                                     disabled={currentPage === totalPages}
+                                    onClick={() => handlePageChange(currentPage + 1)}
                                     className={`px-3 py-1 ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-md`}
                                 >
                                     Next
@@ -167,7 +185,6 @@ const AdminUserManagement = () => {
             </div>
         </div>
     );
-
 };
 
-export default AdminUserManagement; 
+export default AdminUserManagement;
