@@ -4,7 +4,7 @@ import generateToken from '../utils/generateToken.js'
 import nodemailer from 'nodemailer';
 import otpgenerator from 'otp-generator';
 import { generateRandomUsername } from '../utils/utils.js';
-import cloudinary from 'cloudinary'; 
+import cloudinary from "../config/cloudinary.js";
 
 
 
@@ -345,7 +345,7 @@ const updateProfilePicture = asyncHandler(async (req, res) => {
     const { image }=req.body
 
     const result = await cloudinary.uploader.upload(image, {
-        folder: "ProfilePictures", 
+        folder: "ProfilePic",
     });
 
     const user = await User.findById(userId);
@@ -366,6 +366,40 @@ const updateProfilePicture = asyncHandler(async (req, res) => {
 });
 
 
+const updateProfileCoverPicture = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    const { image } = req.body;
+
+    try {
+        // Upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(image, {
+            folder: "ProfileCoverPic",
+        });
+
+        // Find user by ID
+        const user = await User.findById(userId);
+
+        if (!user) {
+            res.status(404);
+            throw new Error('User not found');
+        }
+
+        // Update user's profile cover picture
+        user.profileCoverPicture = {
+            public_id: result.public_id,
+            url: result.secure_url
+        };
+
+        await user.save();
+
+        res.status(200).json({ success: true, message: 'Profile picture updated successfully', data: user.profileImageName });
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        res.status(500).json({ success: false, message: 'Failed to update profile picture' });
+    }
+});
+
+
 
 export {
     authUser,
@@ -378,6 +412,7 @@ export {
     forgotPassword,
     confirmResetPW,
     updateProfilePicture,
+    updateProfileCoverPicture
 }
 
 

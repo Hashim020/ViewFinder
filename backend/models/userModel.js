@@ -37,7 +37,14 @@ const userSchema = new mongoose.Schema(
       },
       url: {
         type: String,
-        required: true
+      }
+    },
+    profileCoverPicture: {
+      public_id: {
+        type: String,
+      },
+      url: {
+        type: String,
       }
     },
     isVerified: {

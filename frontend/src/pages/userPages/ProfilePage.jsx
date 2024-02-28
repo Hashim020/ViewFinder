@@ -7,11 +7,12 @@ import EditProfileModal from '../../components/modal/userModal/EditProfileModal'
 import blankProfilePicture from "../../assets/no-profilePicture.png"
 import { useDisclosure } from '@chakra-ui/react';
 import SetProfilePicture from '../../components/modal/userModal/SetProfilePictureModal';
-
+import SetCoverPicture from '../../components/modal/userModal/SetCoverPicture';
 const ProfilePage = () => {
   const [getUserProfile, isloading] = useGetUserProfileMutation();
   const { isOpen: isEditProfileModalOpen, onOpen: onEditProfileModalOpen, onClose: onEditProfileModalClose } = useDisclosure();
   const { isOpen: isSetProfilePictureModalOpen, onOpen: onSetProfilePictureModalOpen, onClose: onSetProfilePictureModalClose } = useDisclosure();
+  const { isOpen: isSetCoverPictureOpen, onOpen: onSetCoverPictureOpen, onClose: onSetSetCoverPictureClose } = useDisclosure();
   const [userDATA, setuserDATA] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
   const [postCount, setpostCount] = useState(0);
@@ -51,9 +52,13 @@ const ProfilePage = () => {
             <div className="w-full">
               <div className="bg-white shadow-md rounded-lg">
                 <div className="relative">
-                  <img src="https://images.unsplash.com/photo-1549740425-5e9ed4d8cd34?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Profile Picture" className="w-full h-48 object-cover rounded-t-lg" />
+                  {userDATA.profileCoverPicture ? (
+                    <img src={userDATA.profileCoverPicture.url} alt="Profile Cover" className="w-full h-48 object-cover rounded-t-lg" />
+                  ) : (
+                    <div className="w-full h-48 bg-black rounded-t-lg"></div>
+                  )}
                   <div className="absolute bottom inset-0 flex items-center justify-center">
-                    <button className="bg-white text-gray-800 font-semibold py-2 px-4 rounded-full shadow-md" >Edit</button>
+                    <button className="bg-white text-gray-800 font-semibold py-2 px-4 rounded-full shadow-md" onClick={onSetCoverPictureOpen} >Edit</button>
                   </div>
                   <div className="absolute  left-1/2 top-32 transform -translate-x-1/2">
                     {userDATA.profileImageName ? (
@@ -112,6 +117,7 @@ const ProfilePage = () => {
       </div>
       <EditProfileModal isOpen={isEditProfileModalOpen} onClose={onEditProfileModalClose} userDATA={userDATA} />
       <SetProfilePicture isOpen={isSetProfilePictureModalOpen} onClose={onSetProfilePictureModalClose} />
+      <SetCoverPicture isOpen={isSetCoverPictureOpen} onClose={onSetSetCoverPictureClose} />
     </div>
   );
 };
