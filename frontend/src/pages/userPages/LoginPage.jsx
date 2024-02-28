@@ -53,7 +53,9 @@ const LoginPage = () => {
       console.log(res)
       dispatch(setCredentials({ ...res }))
       navigate('/')
-    } catch (err) { }
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
   }
 
 

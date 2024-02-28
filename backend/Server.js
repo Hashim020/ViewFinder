@@ -16,10 +16,9 @@ dotenv.config();
 connectDB();
 const app = Express();
 
-app.use(Express.json());
-app.use(Express.urlencoded({ extended: true }));
+app.use(Express.json({ limit: '50mb' }));
+app.use(Express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
-
 app.use(cors());
 
 app.use('/api/user', userRoutes);

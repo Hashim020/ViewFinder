@@ -136,30 +136,38 @@ const registerOtpVerifiedUser = asyncHandler(async (req, res) => {
 
 const googleRegister = asyncHandler(async (req, res) => {
     const { firstName, lastName, email, profileImageName } = req.body;
-    const NAME = firstName + lastName;
+    const fullName = firstName + lastName;
+    
+ 
     const userExists = await User.findOne({ email });
+    
     if (userExists) {
+        if (userExists.isBlocked) {
+            return res.status(401).json({ message: 'User is blocked' });
+        }
+        
         generateToken(res, userExists._id);
-        console.log("kjasjdkfffffffffffff");
-        res.status(201).json({
+        console.log("User exists and logged in.");
+        
+        return res.status(200).json({
             _id: userExists._id,
             name: userExists.name,
             email: userExists.email,
             profileImageName: profileImageName,
         });
     } else {
-        let userName = generateRandomUsername(NAME);
+        let userName = generateRandomUsername(fullName);
         let userNameExist = await User.findOne({ userName });
-        console.log("kkkkkkkkkk");
 
         while (userNameExist) {
-            userName = generateRandomUsername(NAME);
+            userName = generateRandomUsername(fullName);
             userNameExist = await User.findOne({ userName });
         }
+
         const user = await User.create({
-            name: NAME,
+            name: fullName,
             email: email,
-            password: NAME,
+            password: fullName, // You might want to handle passwords differently for Google registrations
             username: userName,
             profileImageName: profileImageName,
             isVerified: true,
@@ -167,18 +175,20 @@ const googleRegister = asyncHandler(async (req, res) => {
 
         if (user) {
             generateToken(res, user._id);
-            res.status(201).json({
+            console.log("New user created and logged in.");
+            
+            return res.status(201).json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
                 profileImageName: user.profileImageName,
             });
         } else {
-            res.status(400);
-            throw new Error("Invalid user data");
+            return res.status(400).json({ message: "Invalid user data" });
         }
     }
 });
+
 
 
 
