@@ -4,6 +4,7 @@ import generateToken from '../utils/generateToken.js'
 import nodemailer from 'nodemailer';
 import otpgenerator from 'otp-generator';
 import { generateRandomUsername } from '../utils/utils.js';
+import cloudinary from 'cloudinary'; 
 
 
 
@@ -133,47 +134,50 @@ const registerOtpVerifiedUser = asyncHandler(async (req, res) => {
 });
 
 
-
 const googleRegister = asyncHandler(async (req, res) => {
     const { firstName, lastName, email, profileImageName } = req.body;
     const fullName = firstName + lastName;
     
- 
-    const userExists = await User.findOne({ email });
-    
-    if (userExists) {
-        if (userExists.isBlocked) {
-            return res.status(401).json({ message: 'User is blocked' });
-        }
-        
-        generateToken(res, userExists._id);
-        console.log("User exists and logged in.");
-        
-        return res.status(200).json({
-            _id: userExists._id,
-            name: userExists.name,
-            email: userExists.email,
-            profileImageName: profileImageName,
-        });
-    } else {
-        let userName = generateRandomUsername(fullName);
-        let userNameExist = await User.findOne({ userName });
-
-        while (userNameExist) {
-            userName = generateRandomUsername(fullName);
-            userNameExist = await User.findOne({ userName });
-        }
-
-        const user = await User.create({
-            name: fullName,
-            email: email,
-            password: fullName, // You might want to handle passwords differently for Google registrations
-            username: userName,
-            profileImageName: profileImageName,
-            isVerified: true,
-        });
+    try {
+        let user = await User.findOne({ email });
 
         if (user) {
+            if (user.isBlocked) {
+                return res.status(401).json({ message: 'User is blocked' });
+            }
+            
+            generateToken(res, user._id);
+            console.log("User exists and logged in.");
+            
+            return res.status(200).json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                profileImageName: profileImageName,
+            });
+        } else {
+            let userName = generateRandomUsername(fullName);
+            let userNameExist = await User.findOne({ userName });
+    
+            while (userNameExist) {
+                userName = generateRandomUsername(fullName);
+                userNameExist = await User.findOne({ userName });
+            }
+    
+            user = new User({
+                name: fullName,
+                email: email,
+                password: fullName, // You might want to handle passwords differently for Google registrations
+                username: userName,
+                profileImageName: {
+                    public_id: 'YOUR_PUBLIC_ID_HERE', // Set your public ID for the profile image
+                    url: profileImageName, // Assuming profileImageName contains the URL
+                },
+                isVerified: true,
+            });
+    
+            await user.save(); // Save the user
+    
             generateToken(res, user._id);
             console.log("New user created and logged in.");
             
@@ -181,14 +185,13 @@ const googleRegister = asyncHandler(async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                profileImageName: user.profileImageName,
+                profileImageName: user.profileImageName.url, // Return the profile image URL
             });
-        } else {
-            return res.status(400).json({ message: "Invalid user data" });
         }
+    } catch (error) {
+        return res.status(400).json({ message: "Invalid user data", error });
     }
 });
-
 
 
 
@@ -337,6 +340,30 @@ const confirmResetPW = asyncHandler(async (req, res) => {
 });
 
 
+const updateProfilePicture = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    const { image }=req.body
+
+    const result = await cloudinary.uploader.upload(image, {
+        folder: "ProfilePictures", 
+    });
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    user.profileImageName = {
+        public_id: result.public_id,
+        url: result.secure_url
+    };
+
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'Profile picture updated successfully', data: user.profileImageName });
+});
 
 
 
@@ -350,6 +377,7 @@ export {
     updateUserProfile,
     forgotPassword,
     confirmResetPW,
+    updateProfilePicture,
 }
 
 

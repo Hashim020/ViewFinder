@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 
-const CreatePostModal = ({ isOpen, onClose }) => {
+const SetProfilePictureModal  = ({ isOpen, onClose }) => {
     const [isLoading, setisLoading] = useState(false)
     const [caption, setCaption] = useState('');
     const [image, setImage] = useState(null);
@@ -27,9 +27,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
     const imageRef = useRef();
     const cropperRef = useRef();
 
-    const handleCaptionChange = (event) => {
-        setCaption(event.target.value);
-    };
+ 
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -46,7 +44,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
     };
 
     const handlePost = () => {
-        if (!caption || !croppedImage) {
+        if ( !croppedImage) {
             toast.error("Please fill in all fields.");
             return;
         }
@@ -54,11 +52,10 @@ const CreatePostModal = ({ isOpen, onClose }) => {
         setisLoading(true);
     
         const postData = {
-            caption: caption,
             image: croppedImage
         };
     
-        axios.post('/api/user/save-post', postData)
+        axios.put('/api/user/profile-picture', postData)
             .then(response => {
                 console.log('Post successful' + response);
                 toast.success("Post Added");
@@ -76,8 +73,8 @@ const CreatePostModal = ({ isOpen, onClose }) => {
     const initCropper = () => {
         if (imageRef.current && !cropperRef.current) {
             cropperRef.current = new Cropper(imageRef.current, {
-                aspectRatio: 4 / 5,
-                viewMode: 1,
+                aspectRatio: 1 / 1,
+                viewMode: 2, 
                 autoCropArea: 1,
             });
         }
@@ -99,7 +96,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
         <Modal size={"xl"} isOpen={isOpen} onClose={onClose}>
             <ModalOverlay backdropFilter="auto" backdropBlur='2px' />
             <ModalContent>
-                <ModalHeader>Create a New Post</ModalHeader>
+                <ModalHeader>Add new image</ModalHeader>
                 <ModalCloseButton onClick={onClose} />
                 <ModalBody>
                     <FormControl>
@@ -120,10 +117,6 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                             <img src={croppedImage} alt="Cropped" />
                         </div>
                     )}
-                    <FormControl mt={4}>
-                        <FormLabel>Caption:</FormLabel>
-                        <Input value={caption} onChange={handleCaptionChange} placeholder="Enter your caption here" />
-                    </FormControl>
                 </ModalBody>
                 <ModalFooter>
                     {isLoading ? (
@@ -136,7 +129,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                         />
                     ) : (
                         <Button colorScheme='green' mr={3} onClick={handlePost}>
-                            Post
+                            Update
                         </Button>
                     )}
                     <Button colorScheme='blue' mr={3} onClick={onClose}>
@@ -148,4 +141,4 @@ const CreatePostModal = ({ isOpen, onClose }) => {
     );
 };
 
-export default CreatePostModal;
+export default SetProfilePictureModal;

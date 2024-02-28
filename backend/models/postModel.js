@@ -10,6 +10,10 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
     image: {
         public_id: {
             type: String,
@@ -41,7 +45,7 @@ const postSchema = new mongoose.Schema({
     reports: [{
         userId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User' // Reference to the User model
+            ref: 'User'
         },
         reason: {
             type: String,
