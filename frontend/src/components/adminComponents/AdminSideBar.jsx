@@ -42,7 +42,7 @@ const SideBar = () => {
   const sidebarItems = [
     { href: '/admin/Home', icon: FaHome, label: 'Overview' },
     { href: '/admin/user-management', icon: FaUser, label: 'User Management' },
-    { href: '/post-management', icon: FaEnvelope, label: 'Post Management' },
+    { href: '/admin/post-management', icon: FaEnvelope, label: 'Post Management' },
     { href: '/contest-management', icon: FaTrophy, label: 'Contest Management' },
     { href: '/reports', icon: FaChartBar, label: 'Reports' },
   ];

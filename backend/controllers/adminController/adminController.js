@@ -1,7 +1,7 @@
 import AsyncHandler from "express-async-handler";
-import Admin from "../models/adminModel.js"
-import generateAdminToken from "../utils/generateAdminToken.js";
-import User from '../models/userModel.js'
+import Admin from "../../models/adminModel.js"
+import generateAdminToken from "../../utils/generateAdminToken.js";
+import User from '../../models/userModel.js'
 
 
 //@desc Auth admin/set token
@@ -78,8 +78,8 @@ const logoutAdmin = AsyncHandler(async (req, res) => {
 //@access Private
 
 const getAllUser = AsyncHandler(async (req, res) => {
-    const userData = await User.find({});
-
+    const userData = await User.find({}).sort({ createdAt: 1 });
+    console.log(userData);
     if (userData) {
         res.status(200).json(userData);
     } else {
@@ -92,9 +92,6 @@ const getAllUser = AsyncHandler(async (req, res) => {
 //@desc Auth admin/Add User
 //route DELETE /api/admin/add-user
 //@access Private
-
-
-
 const blockUnblockUser = AsyncHandler(async (req, res) => {
     const { userId } = req.body;
     if (!userId) return res.status(400).json({ success: false, message: 'User ID is required' });
@@ -110,19 +107,55 @@ const blockUnblockUser = AsyncHandler(async (req, res) => {
 
 
 const pagination = async (req, res) => {
+    console.log("alkdjsfffff");
     try {
         const { page, perPage } = req.query;
-        const skip = (parseInt(page) - 1) * parseInt(perPage);
-        const users = await User.find().skip(skip).limit(parseInt(perPage));
-        const totalCount = await User.countDocuments(); 
-        const totalPages = Math.ceil(totalCount / parseInt(perPage)); 
-        res.json({ users, totalPages }); 
-        console.log("hi");
+        const totalCount = await User.countDocuments();
+        const totalPages = Math.ceil(totalCount / parseInt(perPage));
+        const skip = Math.max(0, totalCount - (parseInt(page) * parseInt(perPage))); 
+        const users = await User.find()
+            .skip(skip)
+            .limit(parseInt(perPage))
+            .sort({ createdAt: -1 }); // Sort by createdAt in descending order
+        res.json({ users, totalPages });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+
+
+const searchUserData = async (req, res) => {
+    try {
+        const { searchTerm, page, perPage } = req.query;
+        const regex = new RegExp(searchTerm, 'i');
+        const query = {
+            $or: [
+                { username: regex },
+                { name: regex },
+                { email: regex },
+                { gender: regex },
+            ]
+        };
+
+        const totalCount = await User.countDocuments(query);
+        const totalPages = Math.ceil(totalCount / parseInt(perPage));
+
+        const options = {
+            limit: parseInt(perPage) || 10,
+            skip: Math.max(0, totalCount - (parseInt(page) * parseInt(perPage))), // Adjust skip value
+        };
+
+        const users = await User.find(query, null, options);
+
+        res.status(200).json({ users, totalPages });
+    } catch (error) {
+        console.error("Error searching users:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
 
 
 
@@ -137,5 +170,6 @@ export {
     logoutAdmin,
     getAllUser,
     blockUnblockUser,
-    pagination
+    pagination,
+    searchUserData
 }

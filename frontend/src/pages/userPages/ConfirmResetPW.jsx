@@ -9,17 +9,22 @@ const ConfirmResetPW = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  
-  const navigate= useNavigate()
+
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage(null);
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{6,}$/;
+    if (!newPassword.match(passwordRegex)) {
+      setErrorMessage("Password must have at least one lowercase, one uppercase, one digit, one special character, and be at least 6 characters long");
+      return;
+    }
     try {
       if (newPassword !== confirmPassword) {
-        toast.error("Passwords do not match.");
+        return setErrorMessage("password not matching");
       }
 
       const response = await axios.post('http://localhost:5000/api/user/confirmResetPassword', { email, newPassword });
@@ -57,6 +62,7 @@ const ConfirmResetPW = () => {
             <label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-500">Confirm Password</label>
             <input type="password" id="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="px-4 py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200" />
           </div>
+          <p></p>
           <div>
             <button type="submit" className="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4">
               {isLoading ? 'Changing Password...' : 'Change Password'}

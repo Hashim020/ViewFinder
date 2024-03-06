@@ -24,8 +24,10 @@ const LoginPage = () => {
   const { userInfo } = useSelector((state) => { return state.auth });
 
   useEffect(() => {
-    if (userInfo) {
-      navigate('/Home')
+    if (!userInfo) {
+      navigate('/')
+    }else{
+      navigate('/home')
     }
   }, [navigate, userInfo]);
 
@@ -52,7 +54,7 @@ const LoginPage = () => {
       const res = await googelLogin(userData).unwrap()
       console.log(res)
       dispatch(setCredentials({ ...res }))
-      navigate('/')
+      navigate('/home')
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
@@ -65,7 +67,7 @@ const LoginPage = () => {
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
-      navigate('/')
+      navigate('/home')
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }

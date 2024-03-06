@@ -12,7 +12,7 @@ import App from './App.jsx';
 import './index.css';
 
 //user Components
-import PrivateRoute from './components/PrivateRoute.jsx';
+import PrivateRoute from './components/userComponents/PrivateRoute.jsx';
 import LoginPage from './pages/userPages/LoginPage.jsx';
 import RegistrationPage from './pages/userPages/RegistrationPage.jsx';
 import ForgotPassword from './pages/userPages/ForgotPassword.jsx';
@@ -20,10 +20,12 @@ import VerifyOtpReg from './pages/userPages/VerifyOtpReg.jsx';
 import ConfirmResetPW from './pages/userPages/ConfirmResetPW.jsx';
 import HomePage from './pages/userPages/HomePage.jsx';
 import ProfilePage from './pages/userPages/ProfilePage.jsx';
+import OtherUserProfile from './pages/userPages/OtherUserProfile.jsx';
 // admin Components
 import AdminLoginPage from './pages/adminPages/AdminLoginPage.jsx';
 import AdminHome from './pages/adminPages/AdminHome.jsx';
 import AdminUserManagement from './pages/adminPages/AdminUserManagement.jsx';
+import AdminPostManagement from './pages/adminPages/AdminPostManagement.jsx';
 
 
 
@@ -40,11 +42,13 @@ const router = createBrowserRouter(
       <Route path='' element={<PrivateRoute />}>
       <Route path='/Home' element={<HomePage />} />
       <Route path='/myProfile' element={<ProfilePage />} />
+      <Route path='/otheruserProfile/:userId' element={<OtherUserProfile />} />
       </Route>
       {/* Admin Route */}
       <Route path='/admin' element={<AdminLoginPage />} />
       <Route path='/admin/Home' element={<AdminHome />} />
       <Route path='/admin/user-management' element={<AdminUserManagement />} />
+      <Route path='/admin/post-management' element={<AdminPostManagement />} />
     </Route>
   )
 )

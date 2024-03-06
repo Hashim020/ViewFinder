@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 const postSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Reference to the User model
+        ref: 'User', 
         required: true
     },
     caption: {
@@ -24,23 +24,17 @@ const postSchema = new mongoose.Schema({
             required: true
         }
     },
+    isListed: {
+        type: Boolean,
+        default: true 
+    },
     likes: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User' // Reference to the User model
+        ref: 'User' 
     }],
     comments: [{
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User' // Reference to the User model
-        },
-        content: {
-            type: String,
-            required: true
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now
-        }
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment' 
     }],
     reports: [{
         userId: {

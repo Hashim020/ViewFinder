@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -17,7 +18,7 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: ['male', 'female',],
+      enum: ['male', 'female'],
     },
     username: {
       type: String,
@@ -51,6 +52,18 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User" 
+      }
+    ],
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User" 
+      }
+    ],
   },
   { timestamps: true }
 );
@@ -58,6 +71,7 @@ const userSchema = new mongoose.Schema(
 userSchema.methods.matchPassword = async function (password) {
   return await bcrypt.compare(password, this.password)
 }
+
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next()

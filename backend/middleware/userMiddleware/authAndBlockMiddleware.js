@@ -3,11 +3,11 @@ import User from '../../models/userModel.js';
 
 const checkBlockedAndClearToken = async (req, res, next) => {
     try {
-        const token = req.cookies.jwt; // Access token from the cookie
+        const token = req.cookies.jwt; 
 
         if (token) {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const userId = decoded.userId; // Use the correct property name
+            const userId = decoded.userId; 
             const user = await User.findById(userId);
 
             if (user && user.isBlocked) {

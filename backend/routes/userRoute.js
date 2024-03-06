@@ -9,16 +9,25 @@ import {
   confirmResetPW,
   googleRegister,
   getUserProfile,
+  updateUserProfile,
   updateProfilePicture,
-  updateProfileCoverPicture
-} from "../controllers/userController.js";
+  updateProfileCoverPicture,
+  getOtherUserProfile,
+  followUser,
+  unfollowUser
+} from "../controllers/userController/userController.js";
 import {
   createPost,
-  getUserPosts
+  getUserPosts,
+  getAllUsersPost,
+  likeUnlikePost,
+  postComment,
+  getPostComments,
+  editPost
 } from "../controllers/userController/postController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import checkBlockedAndClearToken from "../middleware/userMiddleware/authAndBlockMiddleware.js";
-
+import { editProfileSendOtp } from "../controllers/userController/otpController.js";
 
 
 
@@ -30,10 +39,20 @@ Router.post('/logout', logoutUser);
 Router.post('/signup-verified', registerOtpVerifiedUser);
 Router.post('/forgot-password', forgotPassword);
 Router.post('/confirmResetPassword', confirmResetPW);
-Router.route('/profile').get(protect, checkBlockedAndClearToken, getUserProfile)
+Router.route('/profile').get(protect, checkBlockedAndClearToken, getUserProfile).put(protect, checkBlockedAndClearToken, updateUserProfile);
 Router.post("/save-post", protect, checkBlockedAndClearToken, createPost);
 Router.post("/getuser-post", protect, checkBlockedAndClearToken, getUserPosts);
+Router.get("/getotheruser-profile/:userId", protect, checkBlockedAndClearToken, getOtherUserProfile);
 Router.put("/profile-picture", protect, checkBlockedAndClearToken, updateProfilePicture);
 Router.put("/profileCover-picture", protect, checkBlockedAndClearToken, updateProfileCoverPicture);
+Router.get("/otp-generateForeditProfile", protect, checkBlockedAndClearToken, editProfileSendOtp);
+Router.get("/getall-posts", protect, checkBlockedAndClearToken, getAllUsersPost);
+Router.post("/post-LikeUnlike", protect, checkBlockedAndClearToken, likeUnlikePost);
+Router.post("/post-Comment", protect, checkBlockedAndClearToken, postComment);
+Router.get("/get-comment/:postId", protect, checkBlockedAndClearToken, getPostComments);
+Router.put("/edit-post/:id", protect, checkBlockedAndClearToken, editPost);
+Router.post("/follow-user", protect, checkBlockedAndClearToken, followUser);
+Router.post("/unfollow-user", protect, checkBlockedAndClearToken, unfollowUser);
+
 
 export default Router;

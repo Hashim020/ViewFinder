@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useUpdateUserProfileMutation } from '../../../Slices/userApiSlice';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 import {
     Modal,
     ModalOverlay,
@@ -17,99 +19,220 @@ import {
 } from '@chakra-ui/react';
 
 const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
-
-    const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
+    const navigate = useNavigate();
+    const [updateUserProfile, { isLoading: isUpdateLoading }] = useUpdateUserProfileMutation();
     const [userData, setUserData] = useState({
         name: '',
+        email: '',
+        password: '',
         dateOfBirth: '',
         gender: ''
     });
 
     useEffect(() => {
         if (userDATA) {
-            const formattedDateOfBirth = userDATA.birthdate ? userDATA.birthdate.split('T')[0] : ''; // Extract date part
+            const formattedDateOfBirth = userDATA.birthdate ? userDATA.birthdate.split('T')[0] : '';
             setUserData({
                 name: userDATA.name || '',
+                email: userDATA.email || '',
+                password: '',
                 dateOfBirth: formattedDateOfBirth,
                 gender: userDATA.gender || ''
             });
         }
     }, [userDATA]);
-    console.log(userData);
-    
+
+    const [otpModalOpen, setOtpModalOpen] = useState(false);
+    const [otpData, setOtpData] = useState(null);
+    const [error, setError] = useState('');
+
     const handleChange = (e) => {
         setUserData({ ...userData, [e.target.name]: e.target.value });
     };
 
     const handleSave = async () => {
         try {
-            const { name, dateOfBirth, gender } = userData;
+            const { name, email, password, dateOfBirth, gender, } = userData;
             const formattedDateOfBirth = userDATA.birthdate ? userDATA.birthdate.split('T')[0] : '';
-            console.log("new: " + dateOfBirth + ", old: " + formattedDateOfBirth);
             if (
                 name === userDATA.name &&
-                dateOfBirth === formattedDateOfBirth && // Compare with formatted dateOfBirth
-                gender === userDATA.gender
+                email === userDATA.email &&
+                dateOfBirth === formattedDateOfBirth &&
+                gender === userDATA.gender &&
+                password == ''
             ) {
-                toast.info("No changes to save");
-                onClose(); // Close the modal without saving
+                setError("No changes to save");
                 return;
             }
-    
-            if (!name || !dateOfBirth || !gender) {
-                toast.error("Please fill out all fields");
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+            if (!emailRegex.test(email)) {
+                setError("Enter a Valid Email");
+                return
+            }
+            const trimedpw = password.trim();
+            if (!name || !email || !dateOfBirth || !gender) {
+                setError("Please fill out all fields");
                 return;
             }
-    
-            const response = await updateUserProfile({ name, dateOfBirth, gender });
-            const resp = response.data;
-            if (resp.success === "true") {
-                toast.success("Updated Successfully");
-                onClose(); // Close the modal after successful update
+
+
+            if (password != '') {
+                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{6,}$/;
+                if (!password.match(passwordRegex)) {
+                    setError("Password must have at least one lowercase, one uppercase, one digit, one special character, and be at least 6 characters long");
+                    return;
+                }
+            }
+
+
+            if (email !== userDATA.email) {
+                const otpResponse = await axios.get('/api/user/otp-generateForeditProfile', {
+                    params: { email }
+                });
+
+                const otpData = otpResponse.data;
+                console.log(otpData);
+                if (otpData.success === "true") {
+                    setOtpData(otpData);
+                    setOtpModalOpen(true);
+                    setError('');
+                } else {
+                    setError("Failed to send OTP to your new email.");
+                    return;
+                }
             } else {
-                toast.error("Update failed");
+                const updatedUserData = { name, email, dateOfBirth, gender };
+                if (trimedpw != '') {
+                    updatedUserData.password = password;
+                }
+                await updateUserProfileAndClose(updatedUserData);
             }
         } catch (error) {
             console.error('Error updating profile:', error);
-            toast.error("Error updating profile");
+            setError("Error updating profile");
+        }
+    };
+
+    const updateUserProfileAndClose = async (updatedUserData) => {
+        try {
+            const response = await updateUserProfile(updatedUserData);
+            const resp = response.data;
+            console.log(resp.success);
+            if (resp.success === "true") {
+                toast.success("Successfully Updated")
+                onClose();
+                setError('');
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            setError("Error updating profile");
+        }
+    };
+
+    const handleVerifyOTP = async (otp) => {
+        try {
+            const { name, email, dateOfBirth, gender } = userData;
+            const updatedUserData = { name, email, dateOfBirth, gender };
+            updateUserProfileAndClose(updatedUserData);
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            setError("Error updating profile");
         }
     };
 
     return (
-        <Modal motionPreset='slideInRight' isOpen={isOpen} onClose={onClose}>
+        <>
+            <Modal motionPreset='slideInRight' isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent marginStart='900px'>
+                    <ModalHeader>Edit Profile</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <FormControl id="username">
+                            <FormLabel>User Name</FormLabel>
+                            <Input type="text" name="name" value={userData.name} onChange={handleChange} />
+                        </FormControl>
+                        <FormControl id="dateOfBirth">
+                            <FormLabel>Date of Birth</FormLabel>
+                            <Input type="date" name="dateOfBirth" value={userData.dateOfBirth} max={new Date().toISOString().split('T')[0]} onChange={handleChange} />
+                        </FormControl>
+                        <FormControl id="gender">
+                            <FormLabel>Gender</FormLabel>
+                            <Select placeholder="Select gender" name="gender" value={userData.gender} onChange={handleChange}>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </Select>
+                        </FormControl>
+                        <FormControl id="email">
+                            <FormLabel>Enter New Email</FormLabel>
+                            <Input type="email" name="email" value={userData.email} onChange={handleChange} />
+                        </FormControl>
+                        <FormControl id="password">
+                            <FormLabel>Enter New Password</FormLabel>
+                            <Input type="password" name="password" value={userData.password} onChange={handleChange} />
+                        </FormControl>
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme='blue' mr={3} onClick={onClose}>
+                            Close
+                        </Button>
+                        <Button variant='ghost' onClick={handleSave} >
+                            Save
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+            <OtpVerificationModal
+                isOpen={otpModalOpen}
+                onClose={() => setOtpModalOpen(false)}
+                otpData={otpData}
+                onVerifyOTP={handleVerifyOTP}
+            />
+        </>
+    );
+};
+
+const OtpVerificationModal = ({ isOpen, onClose, otpData, onVerifyOTP }) => {
+    const [otp, setOtp] = useState('');
+    const [error,setError]= useState("")
+    const handleChange = (e) => {
+        setOtp(e.target.value);
+    };
+
+    const handleVerify = () => {
+        if (otp === otpData.otp) {
+            onVerifyOTP(otp);
+            onClose()
+        } else {
+            setError("Invalid OTP. Please retry.");
+        }
+    };
+
+    return (
+        <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
-            <ModalContent marginStart='900px'>
-                <ModalHeader>Edit Profile</ModalHeader>
+            <ModalContent>
+                <ModalHeader>Verify OTP</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <FormControl id="username">
-                        <FormLabel>User Name</FormLabel>
-                        <Input type="text" name="name" value={userData.name} onChange={handleChange} />
-                    </FormControl>
-                    <FormControl id="dateOfBirth">
-                        <FormLabel>Date of Birth</FormLabel>
-                        <Input type="date" name="dateOfBirth" value={userData.dateOfBirth} max={new Date().toISOString().split('T')[0]} onChange={handleChange} />
-                    </FormControl>
-                    <FormControl id="gender">
-                        <FormLabel>Gender</FormLabel>
-                        <Select placeholder="Select gender" name="gender" value={userData.gender} onChange={handleChange}>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </Select>
+                    <FormControl>
+                        <FormLabel>Enter OTP</FormLabel>
+                        <Input type="text" value={otp} onChange={handleChange} />
                     </FormControl>
                 </ModalBody>
-
+                {error && <p style={{ color: 'red' }}>{error}</p>}
                 <ModalFooter>
-                    <Button colorScheme='blue' mr={3} onClick={onClose}>
-                        Close
+                    <Button colorScheme="blue" onClick={handleVerify}>
+                        Verify
                     </Button>
-                    <Button variant='ghost' onClick={handleSave} isLoading={isLoading}>
-                        Save
+                    <Button variant="ghost" onClick={onClose}>
+                        Cancel
                     </Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>
     );
-}
+};
 
 export default EditProfileModal;

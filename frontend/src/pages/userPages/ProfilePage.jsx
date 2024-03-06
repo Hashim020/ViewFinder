@@ -8,14 +8,24 @@ import blankProfilePicture from "../../assets/no-profilePicture.png"
 import { useDisclosure } from '@chakra-ui/react';
 import SetProfilePicture from '../../components/modal/userModal/SetProfilePictureModal';
 import SetCoverPicture from '../../components/modal/userModal/SetCoverPicture';
+import PostViewModal from '../../components/modal/userModal/PostViewModal';
+
+
 const ProfilePage = () => {
   const [getUserProfile, isloading] = useGetUserProfileMutation();
   const { isOpen: isEditProfileModalOpen, onOpen: onEditProfileModalOpen, onClose: onEditProfileModalClose } = useDisclosure();
   const { isOpen: isSetProfilePictureModalOpen, onOpen: onSetProfilePictureModalOpen, onClose: onSetProfilePictureModalClose } = useDisclosure();
   const { isOpen: isSetCoverPictureOpen, onOpen: onSetCoverPictureOpen, onClose: onSetSetCoverPictureClose } = useDisclosure();
+  const { isOpen: isPostViewModalOpen, onOpen: onPostViewModalOpen, onClose: onPostViewModalClose } = useDisclosure();
   const [userDATA, setuserDATA] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
   const [postCount, setpostCount] = useState(0);
+  const [postId, setpostId] = useState(null);
+
+  const handlePostClick = (postId) => {
+    setpostId(postId);
+    onPostViewModalOpen();
+  };
 
   const getUserData = async () => {
     try {
@@ -39,6 +49,7 @@ const ProfilePage = () => {
   useEffect(() => {
     getUserData();
     getUserPosts();
+    console.log(userPosts);
   }, [isEditProfileModalOpen, isSetProfilePictureModalOpen]);
 
   return (
@@ -80,13 +91,13 @@ const ProfilePage = () => {
                     </div>
                     <div className="flex items-center mr-6">
                       <div className="text-gray-600">
-                        <p className="text-xl font-semibold">0</p>
+                        <p className="text-xl font-semibold">{userDATA && userDATA.followers?.length}</p>
                         <p className="text-sm">Followers</p>
                       </div>
                     </div>
                     <div className="flex items-center mr-6">
                       <div className="text-gray-600">
-                        <p className="text-xl font-semibold">0</p>
+                        <p className="text-xl font-semibold">{userDATA && userDATA.following?.length}</p>
                         <p className="text-sm">Following</p>
                       </div>
                     </div>
@@ -104,7 +115,7 @@ const ProfilePage = () => {
                     <div className="grid grid-cols-3 gap-4 mt-4">
                       {userPosts.map(post => (
                         <div key={post._id} className="bg-gray-100 rounded-lg">
-                          <img src={post.image.url} alt={post.caption} className="w-full h-32 object-cover rounded-lg" />
+                          <img src={post.image.url} onClick={() => handlePostClick(post._id)} alt={post.caption} className="w-full h-44 object-cover rounded-lg" />
                         </div>
                       ))}
                     </div>
@@ -118,6 +129,7 @@ const ProfilePage = () => {
       <EditProfileModal isOpen={isEditProfileModalOpen} onClose={onEditProfileModalClose} userDATA={userDATA} />
       <SetProfilePicture isOpen={isSetProfilePictureModalOpen} onClose={onSetProfilePictureModalClose} />
       <SetCoverPicture isOpen={isSetCoverPictureOpen} onClose={onSetSetCoverPictureClose} />
+      <PostViewModal isOpen={isPostViewModalOpen} onClose={onPostViewModalClose} userPosts={userPosts} postId={postId} />
     </div>
   );
 };

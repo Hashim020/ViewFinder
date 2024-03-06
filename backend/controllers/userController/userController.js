@@ -1,10 +1,11 @@
 import asyncHandler from 'express-async-handler'
-import User from '../models/userModel.js'
-import generateToken from '../utils/generateToken.js'
+import User from '../../models/userModel.js'
+import generateToken from '../../utils/generateToken.js'
 import nodemailer from 'nodemailer';
 import otpgenerator from 'otp-generator';
-import { generateRandomUsername } from '../utils/utils.js';
-import cloudinary from "../config/cloudinary.js";
+import { generateRandomUsername } from '../../utils/utils.js';
+import cloudinary from "../../config/cloudinary.js";
+import Post from '../../models/postModel.js'
 
 
 
@@ -137,7 +138,7 @@ const registerOtpVerifiedUser = asyncHandler(async (req, res) => {
 const googleRegister = asyncHandler(async (req, res) => {
     const { firstName, lastName, email, profileImageName } = req.body;
     const fullName = firstName + lastName;
-    
+
     try {
         let user = await User.findOne({ email });
 
@@ -145,10 +146,10 @@ const googleRegister = asyncHandler(async (req, res) => {
             if (user.isBlocked) {
                 return res.status(401).json({ message: 'User is blocked' });
             }
-            
+
             generateToken(res, user._id);
             console.log("User exists and logged in.");
-            
+
             return res.status(200).json({
                 _id: user._id,
                 name: user.name,
@@ -158,12 +159,12 @@ const googleRegister = asyncHandler(async (req, res) => {
         } else {
             let userName = generateRandomUsername(fullName);
             let userNameExist = await User.findOne({ userName });
-    
+
             while (userNameExist) {
                 userName = generateRandomUsername(fullName);
                 userNameExist = await User.findOne({ userName });
             }
-    
+
             user = new User({
                 name: fullName,
                 email: email,
@@ -175,12 +176,12 @@ const googleRegister = asyncHandler(async (req, res) => {
                 },
                 isVerified: true,
             });
-    
+
             await user.save(); // Save the user
-    
+
             generateToken(res, user._id);
             console.log("New user created and logged in.");
-            
+
             return res.status(201).json({
                 _id: user._id,
                 name: user.name,
@@ -265,13 +266,15 @@ const updateUserProfile = asyncHandler(async (req, res) => {
             profileImageName: updatedUser.profileImageName,
             gender: updatedUser.gender,
             dateOfBirth: updatedUser.birthdate,
-            success:"true",
+            success: "true",
         });
     } else {
         res.status(400);
         throw new Error('User not found');
     }
 });
+
+
 
 
 
@@ -342,7 +345,7 @@ const confirmResetPW = asyncHandler(async (req, res) => {
 
 const updateProfilePicture = asyncHandler(async (req, res) => {
     const userId = req.user._id;
-    const { image }=req.body
+    const { image } = req.body
 
     const result = await cloudinary.uploader.upload(image, {
         folder: "ProfilePic",
@@ -399,6 +402,74 @@ const updateProfileCoverPicture = asyncHandler(async (req, res) => {
     }
 });
 
+const getOtherUserProfile = asyncHandler(async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findById(userId).select('-password');
+
+        if (!user) {
+            res.status(404);
+            throw new Error('User not found');
+        }
+
+        const userPosts = await Post.find({ userId }).exec();
+
+        res.json({ user, posts: userPosts });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
+const followUser = asyncHandler(async (req, res) => {
+    const { userId } = req.body;
+
+    const currentUser = await User.findById(req.user._id);
+    const userToFollow = await User.findById(userId);
+
+    if (!userToFollow) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (currentUser.following.includes(userId)) {
+        return res.status(400).json({ message: 'User is already being followed' });
+    }
+
+    currentUser.following.push(userId);
+    await currentUser.save();
+
+    userToFollow.followers.push(currentUser._id);
+    await userToFollow.save();
+
+    res.status(200).json({ message: 'User followed successfully' });
+});
+
+
+
+const unfollowUser = asyncHandler(async (req, res) => {
+    const { userId } = req.body;
+
+    const currentUser = await User.findById(req.user._id);
+
+    const userToUnfollow = await User.findById(userId);
+
+    if (!userToUnfollow) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (!currentUser.following.includes(userId)) {
+        return res.status(400).json({ message: 'User is not currently being followed' });
+    }
+
+    currentUser.following = currentUser.following.filter(id => id.toString() !== userId);
+    await currentUser.save();
+
+    userToUnfollow.followers = userToUnfollow.followers.filter(id => id.toString() !== currentUser._id.toString());
+    await userToUnfollow.save();
+
+    res.status(200).json({ message: 'User unfollowed successfully' });
+});
+
 
 
 export {
@@ -412,7 +483,10 @@ export {
     forgotPassword,
     confirmResetPW,
     updateProfilePicture,
-    updateProfileCoverPicture
+    updateProfileCoverPicture,
+    getOtherUserProfile,
+    followUser,
+    unfollowUser,
 }
 
 

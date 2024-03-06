@@ -14,6 +14,7 @@ const AdminUserManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedGender, setSelectedGender] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
+    const [backendSearchTerm, setBackendSearchTerm] = useState('');
 
     const [blockUnblockUser] = useBlockUnblockUserMutation();
     const navigate = useNavigate();
@@ -23,18 +24,19 @@ const AdminUserManagement = () => {
         if (adminInfo) {
             navigate('/admin/user-management');
         } else {
-            navigate('/admin')
+            navigate('/admin');
         }
     }, [adminInfo, navigate]);
 
     useEffect(() => {
         fetchData(currentPage);
-    }, [currentPage, selectedGender, selectedStatus]);
+    }, [currentPage, selectedGender, selectedStatus, backendSearchTerm]);
 
     const fetchData = async (page) => {
         try {
-            const response = await axios.get(`/api/admin/users-pagenationcall?page=${page}&perPage=${recordsPerPage}`);
-            setFetchedData(response.data.users);
+            const response = await axios.get(`/api/admin/users-search?page=${page}&perPage=${recordsPerPage}&searchTerm=${backendSearchTerm}`);
+            let reversedData = response.data.users.reverse();
+            setFetchedData(reversedData);
             setTotalPages(response.data.totalPages);
         } catch (error) {
             console.error("Error fetching users:", error);
@@ -62,17 +64,16 @@ const AdminUserManagement = () => {
 
     const handleSearch = (event) => {
         setSearchTerm(event.target.value);
+    };
+
+    const handleBackendSearch = () => {
+        setBackendSearchTerm(searchTerm);
         setCurrentPage(1);
-    
-        if (!fetchedData.some(user => user.username.toLowerCase().includes(searchTerm.toLowerCase()))) {
-            toast.info("No users found");
-        }
     };
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
-    
 
     return (
         <div className="flex h-screen">
@@ -81,7 +82,7 @@ const AdminUserManagement = () => {
             </div>
             <div className="flex-1 px-3 py-15 bg-white">
                 <h2 className="text-xl font-semibold mb-4">User Management</h2>
-                <div className="mb-4">
+                <div className="mb-4 flex">
                     <input
                         type="text"
                         className="px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
@@ -89,32 +90,38 @@ const AdminUserManagement = () => {
                         value={searchTerm}
                         onChange={handleSearch}
                     />
+                    <button
+                        onClick={handleBackendSearch}
+                        className="px-4 py-2 ml-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+                    >
+                        Search
+                    </button>
+                </div>
+                <div className="flex justify-start mt-4">
+                    <div className="mr-4">
+                        <select
+                            value={selectedGender}
+                            onChange={(e) => setSelectedGender(e.target.value)}
+                            className="px-2 py-1 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                        >
+                            <option value="">All Genders</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select
+                            value={selectedStatus}
+                            onChange={(e) => setSelectedStatus(e.target.value)}
+                            className="px-2 py-1 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+                        >
+                            <option value="">All Statuses</option>
+                            <option value="Active">Active</option>
+                            <option value="Blocked">Blocked</option>
+                        </select>
+                    </div>
                 </div>
                 <div className="relative border-spacing-2 overflow-x-auto shadow-md rounded-lg">
-                    <div className="flex justify-start  mt-4">
-                        <div className="mr-4">
-                            <select
-                                value={selectedGender}
-                                onChange={(e) => setSelectedGender(e.target.value)}
-                                className="px-2 py-1 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-                            >
-                                <option value="">All Genders</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
-                        </div>
-                        <div>
-                            <select
-                                value={selectedStatus}
-                                onChange={(e) => setSelectedStatus(e.target.value)}
-                                className="px-2 py-1 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-                            >
-                                <option value="">All Statuses</option>
-                                <option value="Active">Active</option>
-                                <option value="Blocked">Blocked</option>
-                            </select>
-                        </div>
-                    </div>
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead>
                             <tr>
@@ -131,13 +138,12 @@ const AdminUserManagement = () => {
                         <tbody>
                             {fetchedData
                                 .filter(user => (
-                                    (!searchTerm || user.username.toLowerCase().includes(searchTerm.toLowerCase())) &&
                                     (!selectedGender || user.gender === selectedGender) &&
                                     (!selectedStatus || (user.isBlocked ? "Blocked" : "Active") === selectedStatus)
                                 ))
                                 .map(user => (
                                     <tr key={user._id}>
-                                        <td className="py-3 px-8">{user.profileImageName && <img src={`${user.profileImageName}`} alt={user.name} className="w-10 h-10 rounded-full" />}</td>
+                                        <td className="py-3 px-8">{user.profileImageName && <img src={`${user.profileImageName.url}`} alt={user.name} className="w-10 h-10 rounded-full" />}</td>
                                         <td className="py-3 px-3">{user.username}</td>
                                         <td className="py-3 px-3">{user.name}</td>
                                         <td className="py-3 px-3">{user.email}</td>
@@ -147,6 +153,7 @@ const AdminUserManagement = () => {
                                         <td className="py-3 px-3"><button onClick={() => handleBlockUser(user._id)} className="px-3 py-1 bg-blue-500 text-white rounded-md">{user.isBlocked ? "Unblock" : "Block"}</button></td>
                                     </tr>
                                 ))}
+
                         </tbody>
                     </table>
                     <nav className="mt-4 pb-1 pl-2 flex justify-end">
