@@ -29,7 +29,7 @@ const getUserPosts = asyncHandler(async (req, res) => {
     const userId = req.user._id;
 
     try {
-        const userPosts = await Post.find({ userId: userId,isListed: true });
+        const userPosts = await Post.find({ userId: userId, isListed: true }).sort({ createdAt: -1 });
         
         res.status(200).json({ success: true, data: userPosts });
     } catch (error) {
@@ -40,7 +40,7 @@ const getUserPosts = asyncHandler(async (req, res) => {
 const getAllUsersPost = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
-        const allPosts = await Post.find({ isListed: true }).sort({ createdAt: 1 }).populate('userId'); 
+        const allPosts = await Post.find({ isListed: true }).sort({ createdAt: -1 }).populate('userId'); 
         res.status(200).json({ success: true, data: allPosts, userId: userId });
     } catch (error) {
         res.status(500).json({ success: false, error: 'Server Error' });
@@ -156,6 +156,22 @@ const editPost = async (req, res) => {
 };
 
 
+const getPostForMadal = asyncHandler(async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const post = await Post.findById(postId).populate('userId');
+        
+        if (!post) {
+            return res.status(404).json({ success: false, message: 'Post not found' });
+        }
+
+        res.status(200).json({ success: true, post });
+    } catch (error) {
+        console.error('Error fetching post:', error.message);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+});
+
 
 
 export {
@@ -165,5 +181,6 @@ export {
     likeUnlikePost,
     postComment,
     getPostComments,
-    editPost
+    editPost,
+    getPostForMadal
 };

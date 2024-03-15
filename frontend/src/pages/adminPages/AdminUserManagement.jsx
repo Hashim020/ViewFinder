@@ -5,7 +5,7 @@ import { useBlockUnblockUserMutation } from '../../Slices/adminApiSlice';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
+import Swal from 'sweetalert2'
 const AdminUserManagement = () => {
     const [fetchedData, setFetchedData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -45,18 +45,30 @@ const AdminUserManagement = () => {
 
     const handleBlockUser = async (userId) => {
         try {
-            const data = { userId };
-            const response = await blockUnblockUser(data);
-            toast.success("Action Applied");
-            setFetchedData(prevData => {
-                return prevData.map(user => {
-                    if (user._id === userId) {
-                        return { ...user, isBlocked: !user.isBlocked };
-                    }
-                    return user;
-                });
+            const result = await Swal.fire({
+                title: "Do really want proceed?",
+                showCancelButton: true,
+                confirmButtonText: "Yes",
             });
-            console.log('User block/unblock successful:', response);
+    
+            if (result.isConfirmed) {
+                const data = { userId };
+                const response = await blockUnblockUser(data);
+                toast.success("Action Applied");
+                setFetchedData(prevData => {
+                    return prevData.map(user => {
+                        if (user._id === userId) {
+                            return { ...user, isBlocked: !user.isBlocked };
+                        }
+                        return user;
+                    });
+                });
+                console.log('User block/unblock successful:', response);
+                Swal.fire("Done!", "success");
+            } else if (result.isDenied) {
+                Swal.fire("Changes are not saved", "", "info");
+            } else {
+            }
         } catch (err) {
             console.error('Error blocking/unblocking user:', err);
         }

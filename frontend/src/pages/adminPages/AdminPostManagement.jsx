@@ -4,7 +4,7 @@ import AdminSideBar from '../../components/adminComponents/AdminSideBar';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-
+import Swal from "sweetalert2"
 const AdminPostManagement = () => {
     const [fetchedData, setFetchedData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -47,23 +47,41 @@ const AdminPostManagement = () => {
 
 
 
-const handleToggleIsListed = async (postId) => {
-    try {
-        const response = await axios.put(`http://localhost:3000/api/admin/posts-unlistlist${postId}`);
-        toast.success("Action Applied");
-        setFetchedData(prevData => {
-            return prevData.map(post => {
-                if (post._id === postId) {
-                    return { ...post, isListed: !post.isListed };
-                }
-                return post;
+    const handleToggleIsListed = async (postId) => {
+        try {
+            const result = await Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to proceed?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes",
+                cancelButtonText: "Cancel",
             });
-        });
-        console.log('Post toggle isListed successful:', response);
-    } catch (err) {
-        console.error('Error toggling isListed:', err);
-    }
-};
+    
+            if (result.isConfirmed) {
+                const response = await axios.put(`http://localhost:3000/api/admin/posts-unlistlist${postId}`);
+                toast.success("Action Applied");
+                setFetchedData(prevData => {
+                    return prevData.map(post => {
+                        if (post._id === postId) {
+                            return { ...post, isListed: !post.isListed };
+                        }
+                        return post;
+                    });
+                });
+                console.log('Post toggle isListed successful:', response);
+                Swal.fire("Success!", "Post toggle isListed successful", "success");
+            } else {
+                Swal.fire("Cancelled", "The action was cancelled", "info");
+            }
+        } catch (err) {
+            console.error('Error toggling isListed:', err);
+            Swal.fire("Error", "An error occurred while toggling isListed", "error");
+        }
+    };
+    
 
     return (
         <div className="flex h-screen">

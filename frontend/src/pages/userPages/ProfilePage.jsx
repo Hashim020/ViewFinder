@@ -55,7 +55,7 @@ const ProfilePage = () => {
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
       <div style={{ flex: '0 0 auto', width: '250px', height: '100%', backgroundColor: '#f0f0f0' }}>
-        <SideBar />
+        <SideBar getUserPosts={getUserPosts} />
       </div>
       <div className="flex-1 h-full bg-white">
         <div className="container  mx-auto px-4">

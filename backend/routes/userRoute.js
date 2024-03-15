@@ -14,7 +14,10 @@ import {
   updateProfileCoverPicture,
   getOtherUserProfile,
   followUser,
-  unfollowUser
+  unfollowUser,
+  userSearch,
+  getFollowers,
+  getFollowing
 } from "../controllers/userController/userController.js";
 import {
   createPost,
@@ -23,7 +26,8 @@ import {
   likeUnlikePost,
   postComment,
   getPostComments,
-  editPost
+  editPost,
+  getPostForMadal
 } from "../controllers/userController/postController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import checkBlockedAndClearToken from "../middleware/userMiddleware/authAndBlockMiddleware.js";
@@ -53,6 +57,11 @@ Router.get("/get-comment/:postId", protect, checkBlockedAndClearToken, getPostCo
 Router.put("/edit-post/:id", protect, checkBlockedAndClearToken, editPost);
 Router.post("/follow-user", protect, checkBlockedAndClearToken, followUser);
 Router.post("/unfollow-user", protect, checkBlockedAndClearToken, unfollowUser);
+Router.post("/user-search", protect, checkBlockedAndClearToken, userSearch);
+Router.post("/get-followers", protect, checkBlockedAndClearToken, getFollowers);
+Router.post("/get-following", protect, checkBlockedAndClearToken, getFollowing);
+Router.get("/get-singlePost/:postId", protect, checkBlockedAndClearToken, getPostForMadal);
+
 
 
 export default Router;

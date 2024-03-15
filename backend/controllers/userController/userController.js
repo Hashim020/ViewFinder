@@ -168,16 +168,16 @@ const googleRegister = asyncHandler(async (req, res) => {
             user = new User({
                 name: fullName,
                 email: email,
-                password: fullName, // You might want to handle passwords differently for Google registrations
+                password: fullName, 
                 username: userName,
                 profileImageName: {
-                    public_id: 'YOUR_PUBLIC_ID_HERE', // Set your public ID for the profile image
-                    url: profileImageName, // Assuming profileImageName contains the URL
+                    public_id: 'YOUR_PUBLIC_ID_HERE', 
+                    url: profileImageName, 
                 },
                 isVerified: true,
             });
 
-            await user.save(); // Save the user
+            await user.save(); 
 
             generateToken(res, user._id);
             console.log("New user created and logged in.");
@@ -186,7 +186,7 @@ const googleRegister = asyncHandler(async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                profileImageName: user.profileImageName.url, // Return the profile image URL
+                profileImageName: user.profileImageName.url, 
             });
         }
     } catch (error) {
@@ -374,12 +374,10 @@ const updateProfileCoverPicture = asyncHandler(async (req, res) => {
     const { image } = req.body;
 
     try {
-        // Upload image to Cloudinary
         const result = await cloudinary.uploader.upload(image, {
             folder: "ProfileCoverPic",
         });
 
-        // Find user by ID
         const user = await User.findById(userId);
 
         if (!user) {
@@ -387,7 +385,6 @@ const updateProfileCoverPicture = asyncHandler(async (req, res) => {
             throw new Error('User not found');
         }
 
-        // Update user's profile cover picture
         user.profileCoverPicture = {
             public_id: result.public_id,
             url: result.secure_url
@@ -412,7 +409,7 @@ const getOtherUserProfile = asyncHandler(async (req, res) => {
             throw new Error('User not found');
         }
 
-        const userPosts = await Post.find({ userId }).exec();
+        const userPosts = await Post.find({ userId }).sort({ createdAt: 'desc' }).exec();
 
         res.json({ user, posts: userPosts });
     } catch (error) {
@@ -471,6 +468,81 @@ const unfollowUser = asyncHandler(async (req, res) => {
 });
 
 
+const userSearch = asyncHandler(async (req, res) => {
+    try {
+        const { searchTerm } = req.body;
+        console.log(req.body);
+        const users = await User.find({
+            $or: [
+                { username: { $regex: searchTerm, $options: 'i' } },
+                { name: { $regex: searchTerm, $options: 'i' } }
+            ]
+        });
+
+        res.status(200).json({ success: true, users });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, error: 'Server Error' });
+    }
+});
+
+
+
+const getFollowers = asyncHandler(async (req, res) => {
+    const { userId } = req.body;
+
+    try {
+        const user = await User.findById(userId).populate({
+            path: 'followers',
+            select: 'name username _id profileImageName.url',
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const followers = user.followers.map(follower => ({
+            id: follower._id,
+            name: follower.name,
+            username: follower.username,
+            profileImageUrl: follower.profileImageName?.url || '',
+        }));
+
+        res.status(200).json({ followers });
+    } catch (error) {
+        console.error('Error fetching followers:', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
+
+
+const getFollowing = asyncHandler(async (req, res) => {
+    const { userId } = req.body; 
+
+    try {
+        const user = await User.findById(userId).populate({
+            path: 'following',
+            select: 'name username _id profileImageName.url', 
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const following = user.following.map(followedUser => ({
+            id: followedUser._id,
+            name: followedUser.name,
+            username: followedUser.username,
+            profileImageUrl: followedUser.profileImageName?.url || '', 
+        }));
+
+        res.status(200).json({ following });
+    } catch (error) {
+        console.error('Error fetching following:', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
 
 export {
     authUser,
@@ -487,6 +559,9 @@ export {
     getOtherUserProfile,
     followUser,
     unfollowUser,
+    userSearch,
+    getFollowers,
+    getFollowing
 }
 
 

@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 
-const CreatePostModal = ({ isOpen, onClose }) => {
+const CreatePostModal = ({ getUserPosts,fetchData, isOpen, onClose }) => {
     const [isLoading, setisLoading] = useState(false)
     const [caption, setCaption] = useState('');
     const [image, setImage] = useState(null);
@@ -50,19 +50,25 @@ const CreatePostModal = ({ isOpen, onClose }) => {
             toast.error("Please fill in all fields.");
             return;
         }
-    
+
         setisLoading(true);
-    
+
         const postData = {
             caption: caption,
             image: croppedImage
         };
-    
+
         axios.post('/api/user/save-post', postData)
             .then(response => {
                 console.log('Post successful' + response);
                 toast.success("Post Added");
                 onClose();
+                if(fetchData){
+                    fetchData()
+                }
+                if(getUserPosts){
+                    getUserPosts()
+                }
             })
             .catch(error => {
                 console.error('Error posting:', error);

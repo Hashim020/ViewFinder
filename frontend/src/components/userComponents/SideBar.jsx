@@ -24,7 +24,7 @@ import {
   Button
 } from '@chakra-ui/react'
 
-const SideBar = () => {
+const SideBar = ({fetchData,getUserPosts}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isPopoverOpen, setPopoverOpen] = useState(false);
   const navigate = useNavigate();
@@ -39,23 +39,23 @@ const SideBar = () => {
       if (userInfo) {
         setlogedUser(userInfo._id)
         const response = await getUserProfile()
-       if(!response.data){
-        dispatch(logout());
-       }
-        
+        if (!response.data) {
+          dispatch(logout());
+        }
+
       }
     }
     checkblockedornor()
   }, [navigate, userInfo]);
 
- useEffect(()=>{
-  if(!userInfo){
-    navigate("/")
-  }
- },[])
+  useEffect(() => {
+    if (!userInfo) {
+      navigate("/")
+    }
+  }, [])
   const sidebarItems = [
     { href: '/Home', icon: FaHome, label: 'Home' },
-    { href: '#', icon: FaSearch, label: 'Search' },
+    { href: '/search-user', icon: FaSearch, label: 'Search' },
     { href: '#', icon: FaEnvelope, label: 'Messages' },
     { href: '#', icon: FaBell, label: 'Notifications' },
     { href: '#', icon: FaEdit, label: 'Create post', onClick: onOpen },
@@ -78,7 +78,7 @@ const SideBar = () => {
     <div className="bg-gray-900 h-screen w-64 fixed top-0 left-0 z-10 flex flex-col justify-between" >
       <div className="justify-center items-center flex">
         <Link to={'/home'} >
-        <img src={Logo} alt="Your Logo" className="h-32 w-auto" />
+          <img src={Logo} alt="Your Logo" className="h-32 w-auto" />
         </Link>
       </div>
       <Sidebar aria-label="Sidebar">
@@ -89,7 +89,7 @@ const SideBar = () => {
                 <Sidebar.Item
                   icon={item.icon}
                   className="text-white px-9 py-4 flex items-center justify-start hover:bg-sky-950"
-                  onClick={item.onClick} // Trigger onOpen when clicking on "Create post" tab
+                  onClick={item.onClick}
                 >
                   {item.label}
                 </Sidebar.Item>
@@ -98,7 +98,7 @@ const SideBar = () => {
           ))}
         </Sidebar.Items>
       </Sidebar>
-      <CreatePostModal isOpen={isOpen} onClose={onClose} />
+      <CreatePostModal fetchData={fetchData} getUserPosts={getUserPosts} isOpen={isOpen} onClose={onClose} />
       {isPopoverOpen && (
         <Popover placement="top" isOpen={isPopoverOpen} onClose={() => setPopoverOpen(false)}>
           <PopoverTrigger>

@@ -21,6 +21,7 @@ import ConfirmResetPW from './pages/userPages/ConfirmResetPW.jsx';
 import HomePage from './pages/userPages/HomePage.jsx';
 import ProfilePage from './pages/userPages/ProfilePage.jsx';
 import OtherUserProfile from './pages/userPages/OtherUserProfile.jsx';
+import SearchUser from './pages/userPages/SearchUser.jsx';
 // admin Components
 import AdminLoginPage from './pages/adminPages/AdminLoginPage.jsx';
 import AdminHome from './pages/adminPages/AdminHome.jsx';
@@ -43,6 +44,7 @@ const router = createBrowserRouter(
       <Route path='/Home' element={<HomePage />} />
       <Route path='/myProfile' element={<ProfilePage />} />
       <Route path='/otheruserProfile/:userId' element={<OtherUserProfile />} />
+      <Route path='/search-user' element={<SearchUser />} />
       </Route>
       {/* Admin Route */}
       <Route path='/admin' element={<AdminLoginPage />} />

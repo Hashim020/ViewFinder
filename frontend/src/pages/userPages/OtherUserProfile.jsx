@@ -15,7 +15,7 @@ const OtherUserProfile = () => {
     const [postCount, setPostCount] = useState(0);
     const [postId, setPostId] = useState(null);
     const [loggeduserid, setloggeduserid] = useState(null)
-    const [isFollowing, setIsFollowing] = useState(false); // New state to track if the user is being followed
+    const [isFollowing, setIsFollowing] = useState(false); 
     const { userId } = useParams();
 
     const { userInfo } = useSelector((state) => { return state.auth });
@@ -33,7 +33,7 @@ const OtherUserProfile = () => {
                 setUserData(data.user);
                 setUserPosts(data.posts);
                 setPostCount(data.posts.length);
-                setIsFollowing(data.user.followers.includes(loggeduserid)); // Check if the logged-in user is already following this user
+                setIsFollowing(data.user.followers.includes(loggeduserid)); 
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -52,8 +52,8 @@ const OtherUserProfile = () => {
             const follwinguserId = id;
             const response = await axios.post("/api/user/follow-user", { userId: follwinguserId });
             console.log(response);
-            setIsFollowing(true); // Update the state to indicate that the user is now being followed
-            setUserData(prevState => ({ ...prevState, followers: [...prevState.followers, loggeduserid] })); // Update the followers list
+            setIsFollowing(true); 
+            setUserData(prevState => ({ ...prevState, followers: [...prevState.followers, loggeduserid] })); 
         } catch (error) {
             console.log(error);
         }
@@ -63,13 +63,30 @@ const OtherUserProfile = () => {
         try {
             const UnfollowingUserId = id;
             const response = await axios.post('/api/user/unfollow-user', { userId: UnfollowingUserId });
-            setIsFollowing(false); // Update the state to indicate that the user is now unfollowed
-            setUserData(prevState => ({ ...prevState, followers: prevState.followers.filter(followerId => followerId !== loggeduserid) })); // Update the followers list
+            setIsFollowing(false); 
+            setUserData(prevState => ({ ...prevState, followers: prevState.followers.filter(followerId => followerId !== loggeduserid) })); 
         } catch (error) {
             console.log(error);
         }
     }
 
+    const handleGetFollowers = async (id)=>{
+        try {
+            const response = axios.post('/api/user/get-followers',{userId:id})
+            console.log(response);
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleGetFollowing = async (id)=>{
+        try {
+            const response = axios.post('/api/user/get-following',{userId:id});
+            console.log(response);
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         <div style={{ display: 'flex', height: '100vh' }}>
@@ -102,7 +119,7 @@ const OtherUserProfile = () => {
                                 <div className="p-4">
                                     <h2 className="text-xl font-semibold text-gray-800">{userData.name}</h2>
                                     <p className="text-gray-600">{`@${userData.username}`}</p>
-                                    {loggeduserid !== userData._id &&  // Add this condition to check if the logged-in user is not the same as the user whose profile is being viewed
+                                    {loggeduserid !== userData._id &&  
                                         <div>
                                             {!isFollowing ? (
                                                 <button type="button" onClick={() => { handleFollow(userData._id) }} className="h-9 absolute bottom-[333px] left-[415px] text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Follow</button>
@@ -120,14 +137,18 @@ const OtherUserProfile = () => {
                                         </div>
                                         <div className="flex items-center mr-6">
                                             <div className="text-gray-600">
+                                                <div className='cursor-pointer hover:text-yellow-500' onClick={()=>handleGetFollowers(userData._id)} >
                                                 <p className="text-xl font-semibold">{userData.followers ? userData.followers.length : 0}</p>
                                                 <p className="text-sm">Followers</p>
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="flex items-center mr-6">
                                             <div className="text-gray-600">
+                                            <div className='cursor-pointer hover:text-yellow-500' onClick={()=>handleGetFollowing(userData._id)} >
                                                 <p className="text-xl font-semibold">{userData.following ? userData.following.length : 0}</p>
                                                 <p className="text-sm">Following</p>
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="flex items-center mr-6">

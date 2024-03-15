@@ -116,7 +116,7 @@ const pagination = async (req, res) => {
         const users = await User.find()
             .skip(skip)
             .limit(parseInt(perPage))
-            .sort({ createdAt: -1 }); // Sort by createdAt in descending order
+            .sort({ createdAt: -1 });
         res.json({ users, totalPages });
     } catch (error) {
         console.error(error);
@@ -144,7 +144,7 @@ const searchUserData = async (req, res) => {
 
         const options = {
             limit: parseInt(perPage) || 10,
-            skip: Math.max(0, totalCount - (parseInt(page) * parseInt(perPage))), // Adjust skip value
+            skip: Math.max(0, totalCount - (parseInt(page) * parseInt(perPage))), 
         };
 
         const users = await User.find(query, null, options);

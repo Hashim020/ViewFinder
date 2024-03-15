@@ -3,43 +3,47 @@ import { Modal, ModalOverlay, ModalContent, ModalBody, Box, Button, FormControl,
 import axios from 'axios';
 import Comments from '../../userComponents/Comments';
 import { toast } from 'react-toastify';
-import { MdOutlineMore } from "react-icons/md";
-import { useSelector } from 'react-redux';
+import { TfiMoreAlt } from "react-icons/tfi";
 
-const PostViewModal = ({ isOpen, onClose, postId, userPosts }) => {
-    const post = userPosts.find(post => post._id === postId);
-    const POSTID = postId;
+const PostViewModal = ({ isOpen, onClose, postId }) => {
+    const [post, setPost] = useState(null);
     const [content, setContent] = useState("");
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     const [editMode, setEditMode] = useState(false);
-    const [editedCaption, setEditedCaption] = useState(post ? post.caption : "");
+    const [editedCaption, setEditedCaption] = useState("");
     const [comments, setComments] = useState([]);
+    const [error, setError] = useState(null);
 
+    const fetchPost = async (postId, setPost) => {
+        try {
+            const response = await axios.get(`/api/user/get-singlePost/${postId}`);
+            setPost(response.data.post);
+        } catch (error) {
+            console.error('Error fetching post:', error.response.data);
+        }
+    };
+    
+    useEffect(() => {
+        if (isOpen && postId) {
+            fetchPost(postId, setPost);
+        }
+    }, [isOpen, postId]);
 
-    const { userInfo } = useSelector((state) => state.auth);
     const fetchComments = async () => {
         try {
-          const response = await axios.get(`/api/user/get-comment/${postId}`);
-          setComments(response.data.comments);
+            const response = await axios.get(`/api/user/get-comment/${postId}`);
+            setComments(response.data.comments);
         } catch (error) {
-          console.error('Error fetching comments:', error.response.data);
+            console.error('Error fetching comments:', error.response.data);
         }
-      };    
-    useEffect(() => {
-        // Reset state when modal is closed
-        if (!isOpen) {
-            setEditMode(false);
-            setEditedCaption(post ? post.caption : "");
-            setContent("");
-        }
-    }, [isOpen, post]);
+    };
 
     const handlePostComment = async () => {
         try {
-            const response = await axios.post(`/api/user/post-comment`, { content, POSTID });
+            const response = await axios.post(`/api/user/post-comment`, { content, POSTID: postId });
             if (response.data.success === "true") {
-                toast.success("commented");
-                fetchComments()
+                toast.success("Comment posted successfully");
+                fetchComments();
             }
         } catch (error) {
             console.error('Error posting comment:', error.response.data);
@@ -47,20 +51,37 @@ const PostViewModal = ({ isOpen, onClose, postId, userPosts }) => {
     };
 
     const handleEditPost = () => {
+        setEditedCaption(post ? post.caption : "");
         setEditMode(true);
         setIsPopoverOpen(false);
     };
 
     const handleSubmitEdit = async () => {
+        const check = editedCaption.trim();
+        if (check === "") {
+            return setError("Required Field");
+        }
+        setError("");
         try {
             const response = await axios.put(`/api/user/edit-post/${postId}`, { caption: editedCaption });
             if (response.data.success === "true") {
-                toast.success(response.data.message);
+                toast.success("Post edited successfully");
+                fetchPost(postId, setPost);
                 setEditMode(false);
             }
         } catch (error) {
+            toast.error(error.response.data.message);
             console.error('Error editing post:', error.response.data);
         }
+    };
+
+    const handleCaptionChange = (e) => {
+        setEditedCaption(e.target.value);
+    };
+
+    const cancelEdit = () => {
+        setEditMode(false);
+        setError("");
     };
 
     return (
@@ -68,9 +89,11 @@ const PostViewModal = ({ isOpen, onClose, postId, userPosts }) => {
             <ModalOverlay backdropFilter="auto" backdropBlur='2px' />
             <ModalContent maxH="400px" maxW="1000px">
                 <Popover isOpen={isPopoverOpen} onClose={() => setIsPopoverOpen(false)}>
-                    <div className=''>
+                    <div onClick={() => setIsPopoverOpen(!isPopoverOpen)} className='cursor-pointer'>
                         <PopoverTrigger>
-                            <MdOutlineMore className='absolute h-4 w-9 right-0 mr-5 mt-3 cursor-pointer' onClick={() => setIsPopoverOpen(!isPopoverOpen)} />
+                            <div className='w-2 cursor-pointer h-2 mt-0 ' >
+                                <TfiMoreAlt className='absolute h-4 w-9 right-0 mr-5 mt-3 cursor-pointer' onClick={() => setIsPopoverOpen(!isPopoverOpen)} />
+                            </div>
                         </PopoverTrigger>
                     </div>
                     <PopoverContent zIndex={5} style={{ position: 'relative', right: '-630px', top: '100%' }} >
@@ -78,7 +101,7 @@ const PostViewModal = ({ isOpen, onClose, postId, userPosts }) => {
                         <PopoverCloseButton />
                         <PopoverHeader>More Options</PopoverHeader>
                         <PopoverBody>
-                            <Button variant="outline" onClick={handleEditPost}>Edit Post</Button>
+                            <a variant="outline" className='cursor-pointer text-blue-700 hover:text-yellow-500' onClick={handleEditPost}>Edit Post</a>
                         </PopoverBody>
                     </PopoverContent>
                 </Popover>
@@ -90,27 +113,35 @@ const PostViewModal = ({ isOpen, onClose, postId, userPosts }) => {
                             </Box>
                             <Box flex="1" ml={4}>
                                 <FormControl mb={4}>
-                                    <FormLabel>User Info</FormLabel>
+                                    <div  className='flex pb-2 '>
+                                    <img src={post.userId.profileImageName.url} alt="User Avatar" className="avatar w-[34px] h-[34px] rounded-full" />
+                                    <p className='font-bold pl-1 pt-1 cursor-pointer' >{post.userId.username}</p>
+                                    </div>
                                     <hr />
                                 </FormControl>
                                 {editMode ? (
                                     <FormControl>
                                         <FormLabel>Edit Caption</FormLabel>
                                         <Input
+                                            maxLength={100}
                                             type="text"
                                             value={editedCaption}
-                                            onChange={(e) => setEditedCaption(e.target.value)}
+                                            onChange={handleCaptionChange}
                                             placeholder="Enter your edited caption"
                                         />
                                         <Button onClick={handleSubmitEdit}>Submit</Button>
+                                        <button type="button" onClick={cancelEdit} className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
+                                            Cancel</button>
+                                        <p className='text-red-500'>{error}</p>
                                     </FormControl>
                                 ) : (
                                     <FormControl>
-                                        <FormLabel>Caption</FormLabel>
-                                        <p>{post.caption}</p>
+                                        <div>
+                                            <p>{post.caption}</p>
+                                        </div>
                                     </FormControl>
                                 )}
-                                <Comments fetchComments={fetchComments} comments={comments}  postId={POSTID} />
+                                <Comments fetchComments={fetchComments} comments={comments} postId={postId} />
                                 <FormControl top={"120px"} id="Comment">
                                     <Input type="text" value={content} onChange={(e) => setContent(e.target.value)} placeholder='Post Your Comment here' name="name" width={"410px"} />
                                     <button type="button" onClick={handlePostComment} className="text-gray-900 absolute hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">POST</button>
