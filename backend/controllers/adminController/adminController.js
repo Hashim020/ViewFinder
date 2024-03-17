@@ -18,6 +18,7 @@ const authAdmin = AsyncHandler(async (req, res) => {
         res.json({
             _id: admin._id,
             email: admin.email,
+            role: "admin",
         });
     } else {
         res.status(401);

@@ -22,6 +22,7 @@ import HomePage from './pages/userPages/HomePage.jsx';
 import ProfilePage from './pages/userPages/ProfilePage.jsx';
 import OtherUserProfile from './pages/userPages/OtherUserProfile.jsx';
 import SearchUser from './pages/userPages/SearchUser.jsx';
+import Settings from './pages/userPages/Settings.jsx';
 // admin Components
 import AdminLoginPage from './pages/adminPages/AdminLoginPage.jsx';
 import AdminHome from './pages/adminPages/AdminHome.jsx';
@@ -34,17 +35,20 @@ import AdminPostManagement from './pages/adminPages/AdminPostManagement.jsx';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
+      {/* Route user */}
       <Route path='/' element={<LoginPage />} />
       <Route path='/signup' element={<RegistrationPage />} />
       <Route path='/restPassword' element={<ForgotPassword />} />
       <Route path='/verifyOtp' element={<VerifyOtpReg />} />
       <Route path='/confirmResetPassword' element={<ConfirmResetPW />} />
-      {/* pirvate Route */}
+      {/* pirvate Route user */}
       <Route path='' element={<PrivateRoute />}>
-      <Route path='/Home' element={<HomePage />} />
-      <Route path='/myProfile' element={<ProfilePage />} />
-      <Route path='/otheruserProfile/:userId' element={<OtherUserProfile />} />
-      <Route path='/search-user' element={<SearchUser />} />
+        <Route path='/Home' element={<HomePage />} />
+        <Route path='/myProfile' element={<ProfilePage />} />
+        <Route path='/otheruserProfile/:userId' element={<OtherUserProfile />} />
+        <Route path='/search-user' element={<SearchUser />} />
+        <Route path='/settings' element={<Settings />} />
+        <Route path='/settings/change-password' element={<Settings />} />
       </Route>
       {/* Admin Route */}
       <Route path='/admin' element={<AdminLoginPage />} />

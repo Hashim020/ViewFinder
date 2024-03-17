@@ -4,6 +4,7 @@ import axios from 'axios';
 import Comments from '../../userComponents/Comments';
 import { toast } from 'react-toastify';
 import { TfiMoreAlt } from "react-icons/tfi";
+import { useSelector } from 'react-redux';
 
 const PostViewModal = ({ isOpen, onClose, postId }) => {
     const [post, setPost] = useState(null);
@@ -13,11 +14,22 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
     const [editedCaption, setEditedCaption] = useState("");
     const [comments, setComments] = useState([]);
     const [error, setError] = useState(null);
+    const [currentUserId, setcurrentUserId] = useState(null)
+    const [postUserId, setpostUserId] = useState(null)
+
+    const { userInfo } = useSelector((state) => { return state.auth });
+
+    useEffect(()=>{
+        if(userInfo){
+            setcurrentUserId(userInfo._id)
+        }
+    })
 
     const fetchPost = async (postId, setPost) => {
         try {
             const response = await axios.get(`/api/user/get-singlePost/${postId}`);
             setPost(response.data.post);
+            setpostUserId(response.data.post.userId._id)
         } catch (error) {
             console.error('Error fetching post:', error.response.data);
         }
@@ -66,8 +78,8 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
             const response = await axios.put(`/api/user/edit-post/${postId}`, { caption: editedCaption });
             if (response.data.success === "true") {
                 toast.success("Post edited successfully");
-                fetchPost(postId, setPost);
                 setEditMode(false);
+                fetchPost(postId, setPost);
             }
         } catch (error) {
             toast.error(error.response.data.message);
@@ -101,7 +113,11 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
                         <PopoverCloseButton />
                         <PopoverHeader>More Options</PopoverHeader>
                         <PopoverBody>
+                            {postUserId==currentUserId ? 
                             <a variant="outline" className='cursor-pointer text-blue-700 hover:text-yellow-500' onClick={handleEditPost}>Edit Post</a>
+                            :
+                            <a>cannot edit</a>
+                            }
                         </PopoverBody>
                     </PopoverContent>
                 </Popover>
@@ -117,6 +133,9 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
                                     <img src={post.userId.profileImageName.url} alt="User Avatar" className="avatar w-[34px] h-[34px] rounded-full" />
                                     <p className='font-bold pl-1 pt-1 cursor-pointer' >{post.userId.username}</p>
                                     </div>
+                                    {post.isEdited ? 
+                                    <a className='text-slate-400'> Edited</a> : <a></a>
+                                    }
                                     <hr />
                                 </FormControl>
                                 {editMode ? (

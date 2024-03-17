@@ -146,14 +146,17 @@ const editPost = async (req, res) => {
             post.caption = caption;
         }
 
+        post.isEdited = true;
+
         await post.save();
 
-        return res.status(200).json({ message: 'Post caption updated successfully', success:"true", post });
+        return res.status(200).json({ message: 'Post caption updated successfully', success: "true", });
     } catch (error) {
         console.error('Error editing post:', error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 
 const getPostForMadal = asyncHandler(async (req, res) => {

@@ -10,6 +10,8 @@ import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../Slices/authSlice';
 import { useGetUserProfileMutation } from '../../Slices/userApiSlice';
+import { MdSettings } from "react-icons/md";
+import { RiLogoutCircleRFill } from "react-icons/ri";
 
 import {
   Popover,
@@ -24,7 +26,7 @@ import {
   Button
 } from '@chakra-ui/react'
 
-const SideBar = ({fetchData,getUserPosts}) => {
+const SideBar = ({ fetchData, getUserPosts }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isPopoverOpen, setPopoverOpen] = useState(false);
   const navigate = useNavigate();
@@ -102,10 +104,21 @@ const SideBar = ({fetchData,getUserPosts}) => {
       {isPopoverOpen && (
         <Popover placement="top" isOpen={isPopoverOpen} onClose={() => setPopoverOpen(false)}>
           <PopoverTrigger>
-            <PopoverContent w="250px" pb={100} >
+            <PopoverContent w="250px" pb={100} top={24} className='mt-4' >
               <PopoverCloseButton />
               <PopoverHeader>More Options</PopoverHeader>
-              <PopoverBody><button className='text-red-700' onClick={handleLogout}  >Logout</button></PopoverBody>
+              <div className=' ml-4'>
+                <Link to={'/settings'}>
+                <div className='flex cursor-pointer'>
+                  <MdSettings className='absolute mt-[12.4px] -ml-2' />
+                  <PopoverBody><button>Settings</button></PopoverBody>
+                </div>
+                </Link>
+                <div onClick={handleLogout} className='flex cursor-pointer'>
+                  <RiLogoutCircleRFill className='absolute mt-[12.4px] -ml-2  text-red-700' />
+                  <PopoverBody><button className='text-red-700'  >Logout</button></PopoverBody>
+                </div>
+              </div>
               <PopoverArrow />
             </PopoverContent>
           </PopoverTrigger>

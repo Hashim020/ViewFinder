@@ -29,6 +29,7 @@ const authUser = asyncHandler(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
+            role: "User"
         });
     } else {
         res.status(401).json({ message: 'Invalid email or password' });
@@ -243,9 +244,6 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         }
         if (req.body.email) {
             user.email = req.body.email;
-        }
-        if (req.body.password) {
-            user.password = req.body.password;
         }
         if (req.file) {
             user.profileImageName = req.file.filename;
@@ -544,6 +542,30 @@ const getFollowing = asyncHandler(async (req, res) => {
     }
 });
 
+
+const changePasswordSettings = asyncHandler(async (req, res) => {
+    console.log("dsoifhasflkasdjflaskdfkalsdfksdfkjkasfh")
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user._id; 
+  
+    const user = await User.findById(userId);
+  
+    if (!user) {
+      res.status(404);
+      throw new Error('User not found');
+    }
+  
+    if (!(await user.matchPassword(currentPassword))) {
+      res.status(400);
+      throw new Error('Invalid current password');
+    }
+  
+    user.password = newPassword;
+    await user.save();
+  
+    res.status(200).json({ message: 'Password updated successfully',success:"true" });
+  });
+
 export {
     authUser,
     registerUser,
@@ -561,7 +583,8 @@ export {
     unfollowUser,
     userSearch,
     getFollowers,
-    getFollowing
+    getFollowing,
+    changePasswordSettings
 }
 
 

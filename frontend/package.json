@@ -28,6 +28,7 @@
     "lodash": "^4.17.21",
     "otp-timer-ts": "^3.0.1",
     "react": "^18.2.0",
+    "react-animated-heart": "^0.0.8",
     "react-dom": "^18.2.0",
     "react-google-button": "^0.7.2",
     "react-icons": "^5.0.1",

@@ -76,13 +76,6 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
             }
 
 
-            if (password != '') {
-                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{6,}$/;
-                if (!password.match(passwordRegex)) {
-                    setError("Password must have at least one lowercase, one uppercase, one digit, one special character, and be at least 6 characters long");
-                    return;
-                }
-            }
 
 
             if (email !== userDATA.email) {
@@ -166,10 +159,6 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
                         <FormControl id="email">
                             <FormLabel>Enter New Email</FormLabel>
                             <Input type="email" name="email" value={userData.email} onChange={handleChange} />
-                        </FormControl>
-                        <FormControl id="password">
-                            <FormLabel>Enter New Password</FormLabel>
-                            <Input type="password" name="password" value={userData.password} onChange={handleChange} />
                         </FormControl>
                         {error && <p style={{ color: 'red' }}>{error}</p>}
                     </ModalBody>

@@ -4,13 +4,16 @@ import { FaRegHeart, FaRegComment, FaHeart } from "react-icons/fa";
 import { useDisclosure } from '@chakra-ui/react';
 import PostViewModal from '../../components/modal/userModal/PostViewModal';
 import { useNavigate } from 'react-router-dom';
+import Heart from "react-animated-heart";
+
+
 
 const UserPostListing = ({ posts, fetchData, userId }) => {
     const { isOpen: isPostViewModalOpen, onOpen: onPostViewModalOpen, onClose: onPostViewModalClose } = useDisclosure();
     const [reload, setReload] = useState(0);
     const [postId, setpostId] = useState(null);
     const navigate = useNavigate();
-
+    const [isClick, setClick] = useState(false);
     useEffect(() => {
         fetchData();
     }, [reload]);
@@ -20,6 +23,7 @@ const UserPostListing = ({ posts, fetchData, userId }) => {
             const response = await axios.post('/api/user/post-LikeUnlike', { postId });
             if (response.data.success === true) {
                 setReload(reload + 1);
+                setClick(!isClick)
             }
         } catch (error) {
             console.log(error);
@@ -59,6 +63,7 @@ const UserPostListing = ({ posts, fetchData, userId }) => {
         }
     };
 
+
     return (
 
         <div className="instagram-home-feed">
@@ -72,14 +77,28 @@ const UserPostListing = ({ posts, fetchData, userId }) => {
                             <h1 className='text-sm ml-1 text-gray-400  leading-[50px] '>{formatTimestamp(post.createdAt)}</h1>
                         </div>
                         <div className="post-content">
-                            <img className='max-w-lg rounded-2xl pt-3' src={post.image.url} alt={post.caption.text} />
+                            <img className='max-w-lg rounded-2xl pt-3' onDoubleClick={() => handleLikeUnlike(post._id)} src={post.image.url} alt={post.caption.text} />
                             <div className='flex flex-wrap'>
-                                {post.likes.includes(userId) ? (
-                                    <FaHeart onClick={() => handleLikeUnlike(post._id)} className="mx-2 my-1 cursor-pointer text-red-500" fontSize="1.7em" />
-                                ) : (
-                                    <FaRegHeart onClick={() => handleLikeUnlike(post._id)} className="mx-2 my-1 hover:text-red-500 cursor-pointer" fontSize="1.7em" />
-                                )}
-                                <FaRegComment onClick={() => handlePostClick(post._id)} className="mx-2 my-1 cursor-pointer hover:text-green-500 " fontSize="1.7em" />
+                                <div className='-mt-[32px] -ml-6'>
+                                    {post.likes.includes(userId) ? (
+                                        <Heart
+                                            isClick={true}
+                                            onClick={() => {
+                                                handleLikeUnlike(post._id);
+                                                setClick(false);
+                                            }}
+                                        />
+                                    ) : (
+                                        <Heart
+                                            isClick={false}
+                                            onClick={() => {
+                                                handleLikeUnlike(post._id);
+                                                setClick(true);
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                                <FaRegComment onClick={() => handlePostClick(post._id)} className="mx-2 -ml-4 my-1 cursor-pointer hover:text-amber-500 " fontSize="1.7em" />
                             </div>
                             <p>{`Likes:${post.likes.length}`}</p>
                             <p>{post.caption}</p>

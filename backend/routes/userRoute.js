@@ -17,8 +17,11 @@ import {
   unfollowUser,
   userSearch,
   getFollowers,
-  getFollowing
+  getFollowing,
+  changePasswordSettings
 } from "../controllers/userController/userController.js";
+
+
 import {
   createPost,
   getUserPosts,
@@ -44,6 +47,7 @@ Router.post('/signup-verified', registerOtpVerifiedUser);
 Router.post('/forgot-password', forgotPassword);
 Router.post('/confirmResetPassword', confirmResetPW);
 Router.route('/profile').get(protect, checkBlockedAndClearToken, getUserProfile).put(protect, checkBlockedAndClearToken, updateUserProfile);
+Router.post("/change-PasswordSettings", protect, checkBlockedAndClearToken,changePasswordSettings)
 Router.post("/save-post", protect, checkBlockedAndClearToken, createPost);
 Router.post("/getuser-post", protect, checkBlockedAndClearToken, getUserPosts);
 Router.get("/getotheruser-profile/:userId", protect, checkBlockedAndClearToken, getOtherUserProfile);
