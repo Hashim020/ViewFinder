@@ -23,6 +23,7 @@ import ProfilePage from '../pages/userPages/ProfilePage.jsx';
 import OtherUserProfile from '../pages/userPages/OtherUserProfile.jsx';
 import SearchUser from '../pages/userPages/SearchUser.jsx';
 import Settings from '../pages/userPages/Settings.jsx';
+import Chatpage from '../pages/userPages/ChatPage.jsx';
 
 
 
@@ -45,6 +46,7 @@ const Routers = () => {
                     <Route path='/search-user' element={<SearchUser />} />
                     <Route path='/settings' element={<Settings />} />
                     <Route path='/settings/change-password' element={<Settings />} />
+                    <Route path='/Messaging' element={<Chatpage />} />
                 </Route>
                 {/* Admin Route */}
                 <Route path='/admin' element={<AdminLoginPage />} />

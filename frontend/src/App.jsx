@@ -1,4 +1,4 @@
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet, BrowserRouter } from "react-router-dom";
 import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ChakraProvider } from '@chakra-ui/react'
@@ -6,6 +6,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 function App() {
   return (
     <>
+   
       <ChakraProvider>
         <ToastContainer
           position="top-center"
@@ -21,6 +22,7 @@ function App() {
           transition={Slide} />
         <Outlet />
       </ChakraProvider>
+      
     </>
   );
 }

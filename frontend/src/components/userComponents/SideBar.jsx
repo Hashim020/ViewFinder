@@ -25,8 +25,11 @@ import {
   PopoverAnchor,
   Button
 } from '@chakra-ui/react'
+import { ChatState } from '../../context/ChatProvide';
 
 const SideBar = ({ fetchData, getUserPosts }) => {
+  const { user, selectedChat, notification,setNotification, } = ChatState();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isPopoverOpen, setPopoverOpen] = useState(false);
   const navigate = useNavigate();
@@ -58,7 +61,7 @@ const SideBar = ({ fetchData, getUserPosts }) => {
   const sidebarItems = [
     { href: '/Home', icon: FaHome, label: 'Home' },
     { href: '/search-user', icon: FaSearch, label: 'Search' },
-    { href: '#', icon: FaEnvelope, label: 'Messages' },
+    { href: '/Messaging ', icon: FaEnvelope, label: 'Messages' },
     { href: '#', icon: FaBell, label: 'Notifications' },
     { href: '#', icon: FaEdit, label: 'Create post', onClick: onOpen },
     { href: '#', icon: FaTrophy, label: 'Contests' },
@@ -77,7 +80,7 @@ const SideBar = ({ fetchData, getUserPosts }) => {
 
 
   return (
-    <div className="bg-gray-900 h-screen w-64 fixed top-0 left-0 z-10 flex flex-col justify-between" >
+    <div className="bg-gray-900 h-screen w-64 fixed top-0 left-0 z-10 flex flex-col justify-between " >
       <div className="justify-center items-center flex">
         <Link to={'/home'} >
           <img src={Logo} alt="Your Logo" className="h-32 w-auto" />

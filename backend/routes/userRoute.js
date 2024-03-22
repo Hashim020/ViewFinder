@@ -37,6 +37,19 @@ import checkBlockedAndClearToken from "../middleware/userMiddleware/authAndBlock
 import { editProfileSendOtp } from "../controllers/userController/otpController.js";
 
 
+import {
+  allUsers,
+  accessChat,
+  fetchChats,
+  createGroupChat,
+  renameGroup,
+  removeFromGroup,
+  addToGroup,
+  sendMessage,
+  allMessages
+} from '../controllers/userController/chatController.js'
+
+
 
 
 Router.post('/signup', registerUser);
@@ -65,6 +78,20 @@ Router.post("/user-search", protect, checkBlockedAndClearToken, userSearch);
 Router.post("/get-followers", protect, checkBlockedAndClearToken, getFollowers);
 Router.post("/get-following", protect, checkBlockedAndClearToken, getFollowing);
 Router.get("/get-singlePost/:postId", protect, checkBlockedAndClearToken, getPostForMadal);
+
+
+// =====================================chat=================================================
+
+Router.get("/messaging-getusers", protect, checkBlockedAndClearToken, allUsers );
+Router.post("/chat/", protect, checkBlockedAndClearToken,accessChat );
+Router.get("/chat/", protect, checkBlockedAndClearToken,fetchChats );
+Router.post("/chat/group", protect, checkBlockedAndClearToken,createGroupChat);
+Router.put("/chat/group-rename", protect, checkBlockedAndClearToken,renameGroup);
+Router.put("/chat/group-add", protect, checkBlockedAndClearToken,addToGroup);
+Router.put("/chat/group-remove", protect, checkBlockedAndClearToken,removeFromGroup);
+// ======================================messaging services=======================
+Router.post("/chat/message/", protect, checkBlockedAndClearToken,sendMessage);
+Router.get("/chat/message/:chatId", protect, checkBlockedAndClearToken,allMessages);
 
 
 

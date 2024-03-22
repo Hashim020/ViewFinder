@@ -29,6 +29,7 @@
     "nodemon": "^3.0.3",
     "otp-generator": "^4.0.1",
     "react-google-button": "^0.7.2",
+    "socket.io": "^4.7.5",
     "speakeasy": "^2.0.0"
   },
   "devDependencies": {
