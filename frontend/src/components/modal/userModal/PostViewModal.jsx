@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalBody, Box, Button, FormControl, FormLabel, Input, Flex, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverArrow, PopoverCloseButton } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalBody, Box, Button, FormControl, FormLabel, Input, Flex, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverArrow, PopoverCloseButton,InputGroup, InputRightAddon } from '@chakra-ui/react';
 import axios from 'axios';
 import Comments from '../../userComponents/Comments';
 import { toast } from 'react-toastify';
 import { TfiMoreAlt } from "react-icons/tfi";
 import { useSelector } from 'react-redux';
+import EmojiPicker from 'emoji-picker-react';
 
 const PostViewModal = ({ isOpen, onClose, postId }) => {
     const [post, setPost] = useState(null);
@@ -16,6 +17,7 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
     const [error, setError] = useState(null);
     const [currentUserId, setcurrentUserId] = useState(null)
     const [postUserId, setpostUserId] = useState(null)
+    const [show, setShow] = React.useState(false);
 
     const { userInfo } = useSelector((state) => { return state.auth });
 
@@ -97,7 +99,9 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
     };
 
     return (
-        <Modal size={"full"} isOpen={isOpen} onClose={onClose}>
+        <Modal
+        motionPreset='slideInBottom'
+         size={"full"} isOpen={isOpen} onClose={onClose}>
             <ModalOverlay backdropFilter="auto" backdropBlur='2px' />
             <ModalContent maxH="400px" maxW="1000px">
                 <Popover isOpen={isPopoverOpen} onClose={() => setIsPopoverOpen(false)}>
@@ -163,7 +167,7 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
                                 <Comments fetchComments={fetchComments} comments={comments} postId={postId} />
                                 <FormControl top={"120px"} id="Comment">
                                     <Input type="text" value={content} onChange={(e) => setContent(e.target.value)} placeholder='Post Your Comment here' name="name" width={"410px"} />
-                                    <button type="button" onClick={handlePostComment} className="text-gray-900 absolute hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">POST</button>
+                                    <button type="button" onClick={handlePostComment} className="text-gray-900 absolute hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800  ">POST</button>
                                 </FormControl>
                                 <hr />
                             </Box>

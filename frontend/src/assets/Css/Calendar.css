@@ -1,0 +1,35 @@
+.calendar-custom {
+    @apply w-full max-w-md;
+  }
+  
+  .calendar-custom td {
+    @apply text-center;
+  }
+  
+  .calendar-custom button {
+    @apply border-0 bg-transparent;
+  }
+  
+  .calendar-custom button:hover {
+    @apply bg-gray-300;
+  }
+  
+  .calendar-custom .react-calendar__navigation {
+    @apply mb-0;
+  }
+  
+  .calendar-custom .react-calendar__month-view__weekdays {
+    @apply text-xs font-normal text-gray-500 uppercase tracking-wider;
+  }
+  
+  .calendar-custom .react-calendar__tile--hasActive {
+    @apply bg-blue-500 text-white;
+  }
+  
+  .calendar-custom .react-calendar__tile--active {
+    @apply bg-blue-200 text-blue-800;
+  }
+  
+  .calendar-custom .react-calendar__tile--now {
+    @apply bg-blue-100 text-blue-600;
+  }

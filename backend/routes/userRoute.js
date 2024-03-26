@@ -30,7 +30,8 @@ import {
   postComment,
   getPostComments,
   editPost,
-  getPostForMadal
+  getPostForMadal,
+  getLikedUsers
 } from "../controllers/userController/postController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import checkBlockedAndClearToken from "../middleware/userMiddleware/authAndBlockMiddleware.js";
@@ -75,9 +76,10 @@ Router.put("/edit-post/:id", protect, checkBlockedAndClearToken, editPost);
 Router.post("/follow-user", protect, checkBlockedAndClearToken, followUser);
 Router.post("/unfollow-user", protect, checkBlockedAndClearToken, unfollowUser);
 Router.post("/user-search", protect, checkBlockedAndClearToken, userSearch);
-Router.post("/get-followers", protect, checkBlockedAndClearToken, getFollowers);
-Router.post("/get-following", protect, checkBlockedAndClearToken, getFollowing);
+Router.get("/get-followers/:userId", protect, checkBlockedAndClearToken, getFollowers);
+Router.get("/get-following/:userId", protect, checkBlockedAndClearToken, getFollowing);
 Router.get("/get-singlePost/:postId", protect, checkBlockedAndClearToken, getPostForMadal);
+Router.get("/get-likedusers/:postId", protect, checkBlockedAndClearToken, getLikedUsers);
 
 
 // =====================================chat=================================================

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Sidebar } from 'flowbite-react';
 import { FaHome, FaSearch, FaEnvelope, FaBell, FaEdit, FaTrophy, FaUser, FaEllipsisH } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDisclosure } from '@chakra-ui/react';
+import { border, useDisclosure } from '@chakra-ui/react';
 import CreatePostModal from '../modal/userModal/CreatePostModal';
 import Logo from "../../assets/Logo.png";
 import { toast } from 'react-toastify';
@@ -64,7 +64,7 @@ const SideBar = ({ fetchData, getUserPosts }) => {
     { href: '/Messaging ', icon: FaEnvelope, label: 'Messages' },
     { href: '#', icon: FaBell, label: 'Notifications' },
     { href: '#', icon: FaEdit, label: 'Create post', onClick: onOpen },
-    { href: '#', icon: FaTrophy, label: 'Contests' },
+    { href: '/Contests', icon: FaTrophy, label: 'Contests' },
     { href: '/myProfile', icon: FaUser, label: 'Profile' },
     { href: '#', icon: FaEllipsisH, label: 'More', onClick: () => setPopoverOpen(true) },
   ];
@@ -86,8 +86,8 @@ const SideBar = ({ fetchData, getUserPosts }) => {
           <img src={Logo} alt="Your Logo" className="h-32 w-auto" />
         </Link>
       </div>
-      <Sidebar aria-label="Sidebar">
-        <Sidebar.Items>
+      <Sidebar  aria-label="Sidebar">
+        <Sidebar.Items >
           {sidebarItems.map((item, index) => (
             <Sidebar.ItemGroup className='mt-0' key={index}>
               <Link to={item.href}>
@@ -124,7 +124,7 @@ const SideBar = ({ fetchData, getUserPosts }) => {
               </div>
               <PopoverArrow />
             </PopoverContent>
-          </PopoverTrigger>
+          </PopoverTrigger> 
         </Popover>
       )}
     </div>

@@ -12,14 +12,13 @@ import {
 } from '@chakra-ui/react';
 import blankProfileImg from '../../../assets/no-profilePicture.png'
 
-
-function FollowersModal({ isOpen, onClose, followers }) {
-  console.log(followers);
+function FollowingsModal({ isOpen, onClose, followings }) {
 
   return (
     <>
 
       <Modal
+
         motionPreset='slideInBottom'
         isOpen={isOpen} onClose={onClose}>
         <ModalOverlay
@@ -28,20 +27,23 @@ function FollowersModal({ isOpen, onClose, followers }) {
           backdropInvert='80%'
           backdropBlur='2px' />
         <ModalContent>
-          <ModalHeader ><p className='text-base'>Followers</p></ModalHeader>
+          <ModalHeader><p className='text-base'>Followings</p></ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            {followers.map((follower) => (
+          <ModalBody
+          >
+            {followings.map((following) => (
               <>
-                <div className='flex' key={follower.id}>
-                  {follower.profileImageUrl ? (
-                    <img src={follower.profileImageUrl} alt="profile pix" className="w-10 h-10 rounded-full" />
+                <div className='flex' key={following.id}>
+                  {following.profileImageUrl ? (
+
+                    <img src={following.profileImageUrl} alt="profile pix" className="w-10 h-10 rounded-full" />
                   ) : (
+
                     <img src={blankProfileImg} alt="profile pix" className="w-10 h-10 rounded-full" />
                   )}
-                  <p className='font-bold -mt-1 ml-1' >{follower.username}</p>
+                  <p className='font-bold -mt-1 ml-1' >{following.username}</p>
                 </div>
-                <p className=' ml-[45px] text-gray-400 -mt-6'>{follower.name}</p>
+                <p className=' ml-[45px] text-gray-400 -mt-6'>{following.name}</p>
               </>
             ))}
           </ModalBody>
@@ -54,4 +56,4 @@ function FollowersModal({ isOpen, onClose, followers }) {
   );
 }
 
-export default FollowersModal;
+export default FollowingsModal;

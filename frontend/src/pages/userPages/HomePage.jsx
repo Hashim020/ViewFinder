@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import SideBar from '../../components/userComponents/SideBar';
 import UserPostListing from '../../components/userComponents/UserPostListing';
-import axios from 'axios';
+import axios from '../../API/axios/axiosInstance.js';
+
 const HomePage = () => {
   const [posts, setPosts] = useState([]);
   const [userId, setuserId] = useState(null);

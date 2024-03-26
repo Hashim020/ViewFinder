@@ -487,7 +487,7 @@ const userSearch = asyncHandler(async (req, res) => {
 
 
 const getFollowers = asyncHandler(async (req, res) => {
-    const { userId } = req.body;
+    const { userId } = req.params;
 
     try {
         const user = await User.findById(userId).populate({
@@ -516,7 +516,7 @@ const getFollowers = asyncHandler(async (req, res) => {
 
 
 const getFollowing = asyncHandler(async (req, res) => {
-    const { userId } = req.body; 
+    const { userId } = req.params; 
 
     try {
         const user = await User.findById(userId).populate({

@@ -30,7 +30,7 @@ const getUserPosts = asyncHandler(async (req, res) => {
 
     try {
         const userPosts = await Post.find({ userId: userId, isListed: true }).sort({ createdAt: -1 });
-        
+
         res.status(200).json({ success: true, data: userPosts });
     } catch (error) {
         res.status(500).json({ success: false, error: 'Server Error' });
@@ -40,7 +40,7 @@ const getUserPosts = asyncHandler(async (req, res) => {
 const getAllUsersPost = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
-        const allPosts = await Post.find({ isListed: true }).sort({ createdAt: -1 }).populate('userId'); 
+        const allPosts = await Post.find({ isListed: true }).sort({ createdAt: -1 }).populate('userId');
         res.status(200).json({ success: true, data: allPosts, userId: userId });
     } catch (error) {
         res.status(500).json({ success: false, error: 'Server Error' });
@@ -48,10 +48,10 @@ const getAllUsersPost = asyncHandler(async (req, res) => {
 });
 
 
-const likeUnlikePost = asyncHandler(async(req,res)=>{
+const likeUnlikePost = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
-        const {postId}= req.body;
+        const { postId } = req.body;
 
         const post = await Post.findById(postId);
         if (!post) {
@@ -77,7 +77,7 @@ const likeUnlikePost = asyncHandler(async(req,res)=>{
 const postComment = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
-       const {content,POSTID}=req.body
+        const { content, POSTID } = req.body
 
         const newComment = new Comment({
             userId: userId,
@@ -97,7 +97,7 @@ const postComment = asyncHandler(async (req, res) => {
 
         await post.save();
 
-        res.status(201).json({ success:"true", message: 'Comment added successfully', comment: savedComment });
+        res.status(201).json({ success: "true", message: 'Comment added successfully', comment: savedComment });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Server Error' });
@@ -118,7 +118,7 @@ const getPostComments = asyncHandler(async (req, res) => {
         });
 
         const comments = post.comments;
-       console.log(comments);
+        console.log(comments);
 
         res.status(200).json({ comments });
     } catch (error) {
@@ -129,7 +129,7 @@ const getPostComments = asyncHandler(async (req, res) => {
 
 const editPost = async (req, res) => {
     try {
-        const postId = req.params.id; 
+        const postId = req.params.id;
         const { caption } = req.body;
         const userId = req.user._id;
         const post = await Post.findById(postId);
@@ -163,7 +163,7 @@ const getPostForMadal = asyncHandler(async (req, res) => {
     try {
         const postId = req.params.postId;
         const post = await Post.findById(postId).populate('userId');
-        
+
         if (!post) {
             return res.status(404).json({ success: false, message: 'Post not found' });
         }
@@ -175,6 +175,26 @@ const getPostForMadal = asyncHandler(async (req, res) => {
     }
 });
 
+const getLikedUsers = asyncHandler(async (req, res) => {
+    const postId = req.params.postId;
+    const post = await Post.findById(postId).populate({
+        path: 'likes',
+        select: 'username name profileImageName url _id'
+    });
+
+    if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const likedUsers = post.likes.map(user => ({
+        id: user._id,
+        username: user.username,
+        name: user.name,
+        photo: user.profileImageName ? user.profileImageName.url : null
+    }));
+
+    res.status(200).json(likedUsers);
+});
 
 
 export {
@@ -185,5 +205,6 @@ export {
     postComment,
     getPostComments,
     editPost,
-    getPostForMadal
+    getPostForMadal,
+    getLikedUsers
 };

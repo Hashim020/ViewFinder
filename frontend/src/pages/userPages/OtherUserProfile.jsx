@@ -6,10 +6,13 @@ import { useDisclosure } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 import PostViewModal from '../../components/modal/userModal/PostViewModal';
 import { useDispatch, useSelector } from 'react-redux';
-
+import FollowersModal from '../../components/modal/userModal/FollowersModal';
+import FollowingsModal from '../../components/modal/userModal/FollowingsModal';
 
 const OtherUserProfile = () => {
+    const { isOpen: isFollowersModalOpen, onOpen: onFollowersModalOpen, onClose: onFollowersModalClose } = useDisclosure();
     const { isOpen: isPostViewModalOpen, onOpen: onPostViewModalOpen, onClose: onPostViewModalClose } = useDisclosure();
+    const { isOpen: isFollowingsModalOpen, onOpen: onFollowingsModalOpen, onClose: onFollowingsModalClose } = useDisclosure();
     const [userData, setUserData] = useState({});
     const [userPosts, setUserPosts] = useState([]);
     const [postCount, setPostCount] = useState(0);
@@ -17,6 +20,8 @@ const OtherUserProfile = () => {
     const [loggeduserid, setloggeduserid] = useState(null)
     const [isFollowing, setIsFollowing] = useState(false); 
     const { userId } = useParams();
+    const[ followers,setFollowers]= useState([]);
+    const[followings,setFollowing]= useState([])
 
     const { userInfo } = useSelector((state) => { return state.auth });
     useEffect(() => {
@@ -72,8 +77,10 @@ const OtherUserProfile = () => {
 
     const handleGetFollowers = async (id)=>{
         try {
-            const response = axios.post('/api/user/get-followers',{userId:id})
-            console.log(response);
+            const {data} = await axios.get(`/api/user/get-followers/${id}`);
+            console.log(data.followers);
+            setFollowers(data.followers);
+            onFollowersModalOpen()
         } catch (error) {
             console.log(error)
         }
@@ -81,8 +88,9 @@ const OtherUserProfile = () => {
 
     const handleGetFollowing = async (id)=>{
         try {
-            const response = axios.post('/api/user/get-following',{userId:id});
-            console.log(response);
+            const {data} = await axios.get(`/api/user/get-following/${id}`);
+            setFollowing(data.following);
+            onFollowingsModalOpen()
         } catch (error) {
             console.log(error)
         }
@@ -177,6 +185,8 @@ const OtherUserProfile = () => {
             </div>
             {/* Post view modal */}
             <PostViewModal isOpen={isPostViewModalOpen} onClose={onPostViewModalClose} userPosts={userPosts} postId={postId} />
+            <FollowersModal isOpen={isFollowersModalOpen} onClose={onFollowersModalClose} followers={followers} />
+            <FollowingsModal isOpen={isFollowingsModalOpen} onClose={onFollowingsModalClose} followings={followings} />
         </div>
     );
 };
