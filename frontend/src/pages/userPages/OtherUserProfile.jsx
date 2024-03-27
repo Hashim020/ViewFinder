@@ -10,8 +10,8 @@ import FollowersModal from '../../components/modal/userModal/FollowersModal';
 import FollowingsModal from '../../components/modal/userModal/FollowingsModal';
 
 const OtherUserProfile = () => {
-    const { isOpen: isFollowersModalOpen, onOpen: onFollowersModalOpen, onClose: onFollowersModalClose } = useDisclosure();
     const { isOpen: isPostViewModalOpen, onOpen: onPostViewModalOpen, onClose: onPostViewModalClose } = useDisclosure();
+    const { isOpen: isFollowersModalOpen, onOpen: onFollowersModalOpen, onClose: onFollowersModalClose } = useDisclosure();
     const { isOpen: isFollowingsModalOpen, onOpen: onFollowingsModalOpen, onClose: onFollowingsModalClose } = useDisclosure();
     const [userData, setUserData] = useState({});
     const [userPosts, setUserPosts] = useState([]);

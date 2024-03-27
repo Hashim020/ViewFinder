@@ -3,11 +3,12 @@ import SideBar from '../../components/userComponents/SideBar';
 import axios from 'axios';
 import blankimage from '../../assets/no-profilePicture.png';
 import { useNavigate } from 'react-router-dom';
-
+import SearchLoading from '../../components/userComponents/SearchLoading';
 const SearchUser = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [error, setError] = useState('');
   const [users, setUsers] = useState([]);
+  const [isloading,setIsLoading]= useState(false)
 
   const handleSearch = async (e) => {
     try {
@@ -17,11 +18,13 @@ const SearchUser = () => {
         setUsers([]);
         return setError('Please enter anything');
       }
+      setIsLoading(true)
       setSearchKeyword(trimmed);
       const response = await axios.post('/api/user/user-search', { searchTerm: trimmed });
       console.log(`response: ${response}`);
       setError('');
       setUsers(response.data.users);
+      setIsLoading(false)
     } catch (error) {
       console.log(error);
       setError('An error occurred while searching.');
@@ -53,7 +56,8 @@ const SearchUser = () => {
             placeholder="Search"
           />
           <p className='text-red-600' >{error}</p>
-          <div>
+          {isloading ? (<SearchLoading/>):(
+            <div>
             {users.map((user) => (
               <div  key={user._id} className="flex items-center space-x-2 mt-4">
                 <img 
@@ -67,6 +71,7 @@ const SearchUser = () => {
               </div>
             ))}
           </div>
+          )}
         </div>
       </div>
     </div>

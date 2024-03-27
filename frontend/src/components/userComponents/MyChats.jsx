@@ -72,6 +72,7 @@ const MyChats = (fetchAgain) => {
 
 
       const { data } = await axios.get('/api/user/chat/');
+      console.log(data);
       setChats(data)
 
     } catch (err) {
@@ -149,6 +150,8 @@ const MyChats = (fetchAgain) => {
                       {chat.latestMessage.content.length > 50
                         ? chat.latestMessage.content.substring(0, 51) + "..."
                         : chat.latestMessage.content}
+                      <br />
+                      <span className='ml-48'>{new Date(chat.latestMessage.createdAt).toLocaleString()}</span>
                     </Text>
                   )}
                 </Box>

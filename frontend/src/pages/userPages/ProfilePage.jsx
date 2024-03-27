@@ -9,7 +9,8 @@ import { useDisclosure } from '@chakra-ui/react';
 import SetProfilePicture from '../../components/modal/userModal/SetProfilePictureModal';
 import SetCoverPicture from '../../components/modal/userModal/SetCoverPicture';
 import PostViewModal from '../../components/modal/userModal/PostViewModal';
-
+import FollowersModal from '../../components/modal/userModal/FollowersModal';
+import FollowingsModal from '../../components/modal/userModal/FollowingsModal';
 
 const ProfilePage = () => {
   const [getUserProfile, isloading] = useGetUserProfileMutation();
@@ -17,10 +18,15 @@ const ProfilePage = () => {
   const { isOpen: isSetProfilePictureModalOpen, onOpen: onSetProfilePictureModalOpen, onClose: onSetProfilePictureModalClose } = useDisclosure();
   const { isOpen: isSetCoverPictureOpen, onOpen: onSetCoverPictureOpen, onClose: onSetSetCoverPictureClose } = useDisclosure();
   const { isOpen: isPostViewModalOpen, onOpen: onPostViewModalOpen, onClose: onPostViewModalClose } = useDisclosure();
+  const { isOpen: isFollowersModalOpen, onOpen: onFollowersModalOpen, onClose: onFollowersModalClose } = useDisclosure();
+  const { isOpen: isFollowingsModalOpen, onOpen: onFollowingsModalOpen, onClose: onFollowingsModalClose } = useDisclosure();
+
   const [userDATA, setuserDATA] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
   const [postCount, setpostCount] = useState(0);
   const [postId, setpostId] = useState(null);
+  const [followers, setFollowers] = useState([]);
+  const [followings, setFollowing] = useState([])
 
   const handlePostClick = (postId) => {
     setpostId(postId);
@@ -51,6 +57,27 @@ const ProfilePage = () => {
     getUserPosts();
     console.log(userPosts);
   }, [isEditProfileModalOpen, isSetProfilePictureModalOpen]);
+
+  const handleGetFollowers = async (id) => {
+    try {
+      const { data } = await axios.get(`/api/user/get-followers/${id}`);
+      console.log(data.followers);
+      setFollowers(data.followers);
+      onFollowersModalOpen()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleGetFollowing = async (id) => {
+    try {
+      const { data } = await axios.get(`/api/user/get-following/${id}`);
+      setFollowing(data.following);
+      onFollowingsModalOpen()
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
@@ -90,13 +117,13 @@ const ProfilePage = () => {
                       </div>
                     </div>
                     <div className="flex items-center mr-6">
-                      <div className="text-gray-600">
+                      <div onClick={() => handleGetFollowers(userDATA._id)} className="text-gray-600 cursor-pointer hover:text-amber-600 ">
                         <p className="text-xl font-semibold">{userDATA && userDATA.followers?.length}</p>
                         <p className="text-sm">Followers</p>
                       </div>
                     </div>
                     <div className="flex items-center mr-6">
-                      <div className="text-gray-600">
+                      <div onClick={() => handleGetFollowing(userDATA._id)} className="text-gray-600 cursor-pointer hover:text-amber-600">
                         <p className="text-xl font-semibold">{userDATA && userDATA.following?.length}</p>
                         <p className="text-sm">Following</p>
                       </div>
@@ -130,6 +157,9 @@ const ProfilePage = () => {
       <SetProfilePicture isOpen={isSetProfilePictureModalOpen} onClose={onSetProfilePictureModalClose} />
       <SetCoverPicture isOpen={isSetCoverPictureOpen} onClose={onSetSetCoverPictureClose} />
       <PostViewModal isOpen={isPostViewModalOpen} onClose={onPostViewModalClose} userPosts={userPosts} postId={postId} />
+      <FollowersModal isOpen={isFollowersModalOpen} onClose={onFollowersModalClose} followers={followers} />
+      <FollowingsModal isOpen={isFollowingsModalOpen} onClose={onFollowingsModalClose} followings={followings} />
+
     </div>
   );
 };

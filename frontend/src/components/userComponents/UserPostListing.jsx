@@ -7,8 +7,8 @@ import Heart from "react-animated-heart";
 import Calendar from './Calendar';
 import PostViewModal from '../../components/modal/userModal/PostViewModal';
 import LikedUsersModal from '../modal/userModal/LikedUsersModal.jsx';
-
-
+import Aos from 'aos'
+import '../../../node_modules/aos/dist/aos.css'
 const UserPostListing = ({ posts, fetchData, userId }) => {
     const { isOpen: isPostViewModalOpen, onOpen: onPostViewModalOpen, onClose: onPostViewModalClose } = useDisclosure();
     const { isOpen: isLikedUsersModalOpen, onOpen: onLikedUsersModalOpen, onClose: onLikedUsersModalClose } = useDisclosure();
@@ -18,6 +18,7 @@ const UserPostListing = ({ posts, fetchData, userId }) => {
     const [isClick, setClick] = useState(false);
     const [likedUsers,setLikedUsers]= useState([]);
     useEffect(() => {
+        Aos.init()
         fetchData();
     }, [reload]);
 
@@ -79,10 +80,10 @@ const UserPostListing = ({ posts, fetchData, userId }) => {
 
     return (
         < div className='flex'>
-            <div className="instagram-home-feed">
+            <div className="instagram-home-feed" >
                 <ul>
                     {posts.map((post) => (
-                        <li key={post._id}>
+                        <li key={post._id} data-aos="fade-right">
                             <div className="user-details pt-16 flex">
                                 <img onClick={() => handleUserProfileClick(post.userId._id)} className="w-12 h-12 rounded-full inline-block cursor-pointer" src={post.userId.profileImageName.url} alt={post.userId.name} />
                                 <p onClick={() => handleUserProfileClick(post.userId._id)} className='inline-block text-black ml-2 mt-3 cursor-pointer '>{post.userId.username}</p>
@@ -126,7 +127,7 @@ const UserPostListing = ({ posts, fetchData, userId }) => {
                 <LikedUsersModal isOpen={isLikedUsersModalOpen} onClose={onLikedUsersModalClose} likedUsers={likedUsers} />
             </div>
             <div >
-                <Calendar />
+                <Calendar data-aos="zoom-out-up" />
             </div>
         </div>
     );
