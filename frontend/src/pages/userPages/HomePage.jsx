@@ -7,6 +7,7 @@ const HomePage = () => {
   const [posts, setPosts] = useState([]);
   const [userId, setuserId] = useState(null);
   useEffect(() => {
+    
     fetchData();
   }, []);
 
@@ -15,7 +16,6 @@ const HomePage = () => {
       const result = await axios.get('/api/user/getall-posts');
       setPosts(result.data.data);
       setuserId(result.data.userId);
-      console.log("Data fetched successfully");
     } catch (error) {
       console.error(error);
     }

@@ -11,6 +11,8 @@ import SetCoverPicture from '../../components/modal/userModal/SetCoverPicture';
 import PostViewModal from '../../components/modal/userModal/PostViewModal';
 import FollowersModal from '../../components/modal/userModal/FollowersModal';
 import FollowingsModal from '../../components/modal/userModal/FollowingsModal';
+import Aos from 'aos'
+import '../../../node_modules/aos/dist/aos.css'
 
 const ProfilePage = () => {
   const [getUserProfile, isloading] = useGetUserProfileMutation();
@@ -55,7 +57,7 @@ const ProfilePage = () => {
   useEffect(() => {
     getUserData();
     getUserPosts();
-    console.log(userPosts);
+    Aos.init()
   }, [isEditProfileModalOpen, isSetProfilePictureModalOpen]);
 
   const handleGetFollowers = async (id) => {
@@ -84,7 +86,7 @@ const ProfilePage = () => {
       <div style={{ flex: '0 0 auto', width: '250px', height: '100%', backgroundColor: '#f0f0f0' }}>
         <SideBar getUserPosts={getUserPosts} />
       </div>
-      <div className="flex-1 h-full bg-white">
+      <div className="flex-1 h-full bg-white" data-aos="fade-right" >
         <div className="container  mx-auto px-4">
           <div className="flex justify-center mt-8">
             <div className="w-full">

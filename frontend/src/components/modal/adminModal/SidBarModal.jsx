@@ -45,12 +45,12 @@ function SidBarModal({ overlayOneContent }) {
             <Modal size='xs' marginTop='-1000' motionPreset='slideInBottom' isOpen={isOpen} onClose={onClose}>
                 {overlay}
                 <ModalContent marginTop='370' marginStart='-1010px'>
-                    <ModalHeader>More Actions</ModalHeader>
+                    <ModalHeader><p className='text-base text-center'>More Actions</p></ModalHeader>
+                    <hr />
                     <ModalCloseButton />
                     <ModalBody>
-                        <Flex justifyContent='flex-end'>
-                            <Button onClick={handleLogout} mr={2} colorScheme='red' >Logout</Button>
-                            <Button variant='outline'>Sample Button</Button>
+                        <Flex justifyContent='flex-start'>
+                            <p onClick={handleLogout} className='text-red-800 cursor-pointer hover:shadow-lg hover:shadow-red-800 rounded'>Logout</p>
                         </Flex>
                     </ModalBody>
                     <ModalFooter>

@@ -31,7 +31,8 @@ import {
   getPostComments,
   editPost,
   getPostForMadal,
-  getLikedUsers
+  getLikedUsers,
+  reportPost
 } from "../controllers/userController/postController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import checkBlockedAndClearToken from "../middleware/userMiddleware/authAndBlockMiddleware.js";
@@ -71,6 +72,7 @@ Router.get("/otp-generateForeditProfile", protect, checkBlockedAndClearToken, ed
 Router.get("/getall-posts", protect, checkBlockedAndClearToken, getAllUsersPost);
 Router.post("/post-LikeUnlike", protect, checkBlockedAndClearToken, likeUnlikePost);
 Router.post("/post-Comment", protect, checkBlockedAndClearToken, postComment);
+Router.put("/post-report", protect, checkBlockedAndClearToken, reportPost);
 Router.get("/get-comment/:postId", protect, checkBlockedAndClearToken, getPostComments);
 Router.put("/edit-post/:id", protect, checkBlockedAndClearToken, editPost);
 Router.post("/follow-user", protect, checkBlockedAndClearToken, followUser);

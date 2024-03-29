@@ -196,6 +196,33 @@ const getLikedUsers = asyncHandler(async (req, res) => {
     res.status(200).json(likedUsers);
 });
 
+const reportPost = asyncHandler(async (req, res) => {
+    const { reason, postId } = req.body;
+    const userId = req.user._id;
+
+    try {
+        const post = await Post.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({ success: false, message: 'Post not found' });
+        }
+
+        const alreadyReported = post.reports.some(report => report.userId.toString() === userId.toString());
+        if (alreadyReported) {
+            return res.status(400).json({ success: false, message: 'You have already reported this post' });
+        }
+
+        post.reports.push({ userId, reason });
+        await post.save();
+
+        res.status(200).json({ success: true, message: 'Post reported successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+});
+
+
 
 export {
     createPost,
@@ -206,5 +233,6 @@ export {
     getPostComments,
     editPost,
     getPostForMadal,
-    getLikedUsers
+    getLikedUsers,
+    reportPost
 };

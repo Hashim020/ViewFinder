@@ -8,8 +8,10 @@ import { ChatState } from '../../context/ChatProvide';
 import { getSenderName } from '../../config/ChatLogics';
 import { IoCreate } from "react-icons/io5";
 import GroupChatModal from '../modal/userModal/GroupChatModal';
+import Aos from 'aos'
+import '../../../node_modules/aos/dist/aos.css'
 
-const MyChats = (fetchAgain) => {
+const MyChats = ({fetchAgain}) => {
   const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState()
   const [Search, setSearch] = useState(null);
   const [searchResult, setsearchResult] = useState([]);
@@ -19,10 +21,27 @@ const MyChats = (fetchAgain) => {
   const [loggedUser, setLoggedUser] = useState(user);
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  
 
 
+  const fetchChat = async () => {
+    try {
 
 
+      const { data } = await axios.get('/api/user/chat/');
+      console.log(data);
+      setChats(data)
+
+    } catch (err) {
+
+    }
+
+  }
+useEffect(() => {
+    setLoggedUser(user);
+    fetchChat();
+    Aos.init();
+  }, [fetchAgain]);
   const toast = useToast()
 
   const handleSearch = async (e) => {
@@ -67,30 +86,14 @@ const MyChats = (fetchAgain) => {
   }
 
 
-  const fetchChat = async () => {
-    try {
 
 
-      const { data } = await axios.get('/api/user/chat/');
-      console.log(data);
-      setChats(data)
-
-    } catch (err) {
-
-    }
-
-  }
-
-  useEffect(() => {
-    setLoggedUser(user)
-    fetchChat()
-  }, [])
 
   return (
-    <div className='border-r pr-5 overflow-auto w-[400px] -mt-4'>
+    <div className='border-r pr-5 overflow-auto w-[400px] -mt-4' data-aos="fade-right"  >
       <h1 className='font-bold pb-9 pt-3'>Messages</h1>
       <div onClick={onOpen} className='cursor-pointer'>
-        <IoCreate className='absolute -mt-14 text-3xl right-[703px]' />
+        <IoCreate className=' relative text-lg -mt-[56px] ml-[360px]' />
         <GroupChatModal isOpen={isOpen} onClose={onClose} />
       </div>
       <Input

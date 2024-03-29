@@ -112,7 +112,7 @@ const UserPostListing = ({ posts, fetchData, userId }) => {
                                             />
                                         )}
                                     </div>
-                                    <FaRegComment onClick={() => handlePostClick(post._id)} className="mx-2 -ml-4 my-1 cursor-pointer hover:text-amber-500 " fontSize="1.7em" />
+                                    <FaRegComment onClick={() => handlePostClick(post._id)} className="mx-2 -ml-4 my-1 cursor-pointer hover:text-amber-500 rounded-md hover:shadow-lg hover:shadow-amber-500 " fontSize="1.7em" />
                                 </div>
                                 <div className='-mt-6 ml-1'>
                                     <p onClick={()=>handleGetLikesUsers(post._id)}  className='cursor-pointer w-80 hover:text-amber-600'>{`Likes:${post.likes.length}`}</p>

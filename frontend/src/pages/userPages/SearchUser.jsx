@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SideBar from '../../components/userComponents/SideBar';
 import axios from 'axios';
 import blankimage from '../../assets/no-profilePicture.png';
 import { useNavigate } from 'react-router-dom';
 import SearchLoading from '../../components/userComponents/SearchLoading';
+import Aos from 'aos'
+import '../../../node_modules/aos/dist/aos.css'
 const SearchUser = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [error, setError] = useState('');
   const [users, setUsers] = useState([]);
-  const [isloading,setIsLoading]= useState(false)
+  const [isloading, setIsLoading] = useState(false)
 
   const handleSearch = async (e) => {
     try {
@@ -34,19 +36,23 @@ const SearchUser = () => {
 
   const handleUserProfileClick = async (userId) => {
     try {
-        navigate(`/otheruserProfile/${userId}`);
+      navigate(`/otheruserProfile/${userId}`);
     } catch (error) {
-        console.log(error)
+      console.log(error)
     }
-}
+  }
+
+  useEffect(()=>{
+    Aos.init()
+  },[])
 
   return (
     <div className="flex min-h-screen">
       <div className="w-64 bg-gray-200">
         <SideBar />
       </div>
-      <div className="ml-48 w-[500px] border-r">
-        <div className="absolute top-6 left-[360px]">
+      <div className="ml-48 w-[500px] border-r" >
+        <div className="absolute top-6 left-[360px]"data-aos="fade-right">
           <h1 className="text-3xl font-bold mb-4">Search</h1>
           <input
             onChange={handleSearch}
@@ -56,21 +62,21 @@ const SearchUser = () => {
             placeholder="Search"
           />
           <p className='text-red-600' >{error}</p>
-          {isloading ? (<SearchLoading/>):(
+          {isloading ? (<SearchLoading />) : (
             <div>
-            {users.map((user) => (
-              <div  key={user._id} className="flex items-center space-x-2 mt-4">
-                <img 
-                  src={user.profileImageName ? user.profileImageName.url : blankimage}
-                  alt={user.name}
-                  className="rounded-full w-10 h-10"
-                />
-                <div>
-                  <p onClick={() => handleUserProfileClick(user._id)}  className="font-bold cursor-pointer text-gray-600">{user.name}</p>
+              {users.map((user) => (
+                <div key={user._id} className="flex items-center space-x-2 mt-4">
+                  <img
+                    src={user.profileImageName ? user.profileImageName.url : blankimage}
+                    alt={user.name}
+                    className="rounded-full w-10 h-10"
+                  />
+                  <div>
+                    <p onClick={() => handleUserProfileClick(user._id)} className="font-bold cursor-pointer text-gray-600">{user.name}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
           )}
         </div>
       </div>

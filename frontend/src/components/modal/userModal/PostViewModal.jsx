@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, ModalOverlay, ModalContent, ModalBody, Box, Button, FormControl, FormLabel, Input, Flex, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverArrow, PopoverCloseButton,InputGroup, InputRightAddon } from '@chakra-ui/react';
+import { Modal, ModalOverlay, ModalContent, ModalBody, Box, Button, FormControl, FormLabel, Input, Flex, Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverArrow, PopoverCloseButton,InputGroup, InputRightAddon, useDisclosure } from '@chakra-ui/react';
 import axios from 'axios';
 import Comments from '../../userComponents/Comments';
 import { toast } from 'react-toastify';
 import { TfiMoreAlt } from "react-icons/tfi";
 import { useSelector } from 'react-redux';
 import EmojiPicker from 'emoji-picker-react';
+import ReportPostModal from './ReportPostMadal'
 
 const PostViewModal = ({ isOpen, onClose, postId }) => {
+    const PostViewModalonclose=onClose
     const [post, setPost] = useState(null);
     const [content, setContent] = useState("");
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -18,8 +20,8 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
     const [currentUserId, setcurrentUserId] = useState(null)
     const [postUserId, setpostUserId] = useState(null)
     const [show, setShow] = React.useState(false);
-
     const { userInfo } = useSelector((state) => { return state.auth });
+    const { isOpen: isReportPostModalOpen, onOpen: onReportPostModalOpen, onClose: onReportPostModalClose } = useDisclosure();
 
     useEffect(()=>{
         if(userInfo){
@@ -107,20 +109,23 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
                 <Popover isOpen={isPopoverOpen} onClose={() => setIsPopoverOpen(false)}>
                     <div onClick={() => setIsPopoverOpen(!isPopoverOpen)} className='cursor-pointer'>
                         <PopoverTrigger>
-                            <div className='w-2 cursor-pointer h-2 mt-0 ' >
-                                <TfiMoreAlt className='absolute h-4 w-9 right-0 mr-5 mt-3 cursor-pointer' onClick={() => setIsPopoverOpen(!isPopoverOpen)} />
+                            <div className='w-2   h-2 mt-0 ' >
+                                <TfiMoreAlt className='absolute h-4 w-9 right-0 mr-5 mt-3 cursor-pointer hover:shadow-neutral-800 rounded hover:shadow-lg' onClick={() => setIsPopoverOpen(!isPopoverOpen)} />
                             </div>
                         </PopoverTrigger>
                     </div>
-                    <PopoverContent zIndex={5} style={{ position: 'relative', right: '-630px', top: '100%' }} >
+                    <PopoverContent className='ml-44' zIndex={5} style={{ position: 'relative', right: '-630px', top: '100%' }} >
                         <PopoverArrow />
                         <PopoverCloseButton />
                         <PopoverHeader>More Options</PopoverHeader>
                         <PopoverBody>
                             {postUserId==currentUserId ? 
+                            < div className=' flex flex-col'>
                             <a variant="outline" className='cursor-pointer text-blue-700 hover:text-yellow-500' onClick={handleEditPost}>Edit Post</a>
+                            <a className='text-red-600 cursor-pointer hover:shadow-lg hover:shadow-red-400 shadow-transparent rounded-lg' >Delete post</a>
+                            </div>
                             :
-                            <a>cannot edit</a>
+                            <a onClick={()=>{onReportPostModalOpen()}} className='text-red-700 rounded-sm hover:shadow-inner hover:shadow-red-400 cursor-pointer'>Report</a>
                             }
                         </PopoverBody>
                     </PopoverContent>
@@ -175,6 +180,7 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
                     )}
                 </ModalBody>
             </ModalContent>
+            <ReportPostModal PostViewModalonclose={PostViewModalonclose} postId={postId} isOpen={isReportPostModalOpen} onClose={onReportPostModalClose}/>
         </Modal>
     );
 };
