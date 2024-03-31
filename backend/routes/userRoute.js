@@ -52,6 +52,12 @@ import {
 } from '../controllers/userController/chatController.js'
 
 
+import {
+  createContest
+} 
+from '../controllers/userController/contestController.js' 
+
+
 
 
 Router.post('/signup', registerUser);
@@ -97,6 +103,10 @@ Router.put("/chat/group-remove", protect, checkBlockedAndClearToken,removeFromGr
 Router.post("/chat/message/", protect, checkBlockedAndClearToken,sendMessage);
 Router.get("/chat/message/:chatId", protect, checkBlockedAndClearToken,allMessages);
 
+
+// ==================================constest===========================================
+
+Router.post('/Contest/create',protect,checkBlockedAndClearToken,createContest);
 
 
 export default Router;

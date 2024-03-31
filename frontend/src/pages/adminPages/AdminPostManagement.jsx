@@ -4,13 +4,17 @@ import AdminSideBar from '../../components/adminComponents/AdminSideBar';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
+import { useDisclosure } from '@chakra-ui/react';
+import ReportsModal from '../../components/modal/adminModal/ReportsModal';
 const AdminPostManagement = () => {
     const [fetchedData, setFetchedData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const recordsPerPage = 5;
     const [searchTerm, setSearchTerm] = useState('');
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    
 
     const navigate = useNavigate();
     const { adminInfo } = useSelector((state) => state.adminAuth);
@@ -81,6 +85,11 @@ const AdminPostManagement = () => {
             Swal.fire("Error", "An error occurred while toggling isListed", "error");
         }
     };
+    const [POSTID, setPOSTID] = useState("")
+    const HandlePostClick = async (id)=>{
+        setPOSTID(id)
+        onOpen()
+    }
     
 
     return (
@@ -109,6 +118,7 @@ const AdminPostManagement = () => {
                                 <th className="py-3 px-3">Likes</th>
                                 <th className="py-3 px-3">Comments</th>
                                 <th className="py-3 px-3">Is Listed?</th>
+                                <th className="py-3 px-3 text-red-700"> Post Reports</th>
                                 <th className="py-3 px-3">Action</th>
                             </tr>
                         </thead>
@@ -125,6 +135,7 @@ const AdminPostManagement = () => {
                                         <td className="py-3 px-3">{post.likes.length}</td>
                                         <td className="py-3 px-3">{post.comments.length}</td>
                                         <td className="py-3 px-3">{post.isListed ? "Yes" : "No"}</td>
+                                        <td onClick={()=>HandlePostClick(post._id)} className="py-3 px-3  cursor-pointer text-red-700 hover:text-blue-700 ">{`Reports : ${post.reports.length}`}</td>
                                         <td className="py-3 px-3">
                                             {post.isListed ? (
                                                 <button onClick={() => handleToggleIsListed(post._id)} className="px-3 py-1 bg-red-500 text-white rounded-md">Unlist</button>
@@ -170,6 +181,7 @@ const AdminPostManagement = () => {
                     </nav>
                 </div>
             </div>
+           < ReportsModal postId={POSTID} isOpen={isOpen} onClose={onClose} />
         </div>
     );
 };

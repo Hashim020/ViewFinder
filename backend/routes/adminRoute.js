@@ -16,7 +16,8 @@ import {
 
 import {
     getPostWithPaginations,
-    postListUnlist
+    postListUnlist,
+    getPostReports
 } from '../controllers/adminController/adminPostController.js'
 
 router.post('/', adminRegister);
@@ -31,7 +32,7 @@ router.get('/users-search',protect,searchUserData);
 
 router.get('/posts-pagenationcall',protect,getPostWithPaginations);
 router.put('/posts-unlistlist:postId',protect,postListUnlist);
-
+router.get('/posts-reports/:postid', getPostReports);
 
 
 

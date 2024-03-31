@@ -34,8 +34,31 @@ const postListUnlist = async (req, res) => {
     }
 };
 
+const getPostReports = async (req, res) => {
+    try {
+        console.log("lajsdfasdfasdflasdfjasdljflasdjf");
+        const postId = req.params.postid;
+        console.log(postId);
+        const post = await Post.findById(postId).populate('reports.userId');
+        
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+        
+        const reports = post.reports;
+        
+        res.status(200).json({ reports });
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+
 
 export{
     getPostWithPaginations,
-    postListUnlist
+    postListUnlist,
+    getPostReports
 }
