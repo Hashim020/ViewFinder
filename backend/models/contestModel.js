@@ -10,16 +10,13 @@ const contestSchema = new Schema({
     type: String,
     required: true
   },
-  price: {
-    type: Number,
-  },
   coverPhoto: {
     type: String,
     required: true
   },
   createdBy: {
     type: Schema.Types.ObjectId,
-    ref: 'User', // referencing the User model
+    ref: 'User', 
     required: true
   },
   createdAt: {
@@ -30,12 +27,26 @@ const contestSchema = new Schema({
     type: Date,
     required: true
   },
-  type :{
-    type: String,
-    enum:["free", "paid"]
+  participation: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post'
+  }],
+  participants: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  isActive: {
+    type: Boolean,
+    default: true
   }
 });
 
 const Contest = mongoose.model('Contest', contestSchema);
 
 export default Contest;
+
+export function updateContestStatus() {
+  Contest.updateMany({ expiryDate: { $lt: new Date() } }, { $set: { isActive: false } })
+    .then(() => console.log('Contest statuses updated successfully.'))
+    .catch(err => console.error('Error updating contest statuses:', err));
+}

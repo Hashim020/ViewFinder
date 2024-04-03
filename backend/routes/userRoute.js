@@ -53,7 +53,10 @@ import {
 
 
 import {
-  createContest
+  createContest,
+  getContests,
+  userParticipation,
+  getSelectedContest
 } 
 from '../controllers/userController/contestController.js' 
 
@@ -107,6 +110,9 @@ Router.get("/chat/message/:chatId", protect, checkBlockedAndClearToken,allMessag
 // ==================================constest===========================================
 
 Router.post('/Contest/create',protect,checkBlockedAndClearToken,createContest);
+Router.get('/Contest/',protect,checkBlockedAndClearToken,getContests);
+Router.put('/Contest/participate',protect,checkBlockedAndClearToken,userParticipation);
+Router.get('/Contest/get-selected/:contestId',protect,checkBlockedAndClearToken,getSelectedContest);
 
 
 export default Router;

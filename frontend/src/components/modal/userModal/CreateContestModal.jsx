@@ -15,21 +15,16 @@ import {
     FormLabel,
     Input,
     Textarea,
-    RadioGroup,
-    HStack,
-    Radio,
     Collapse,
     NumberInput
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { CircularProgress } from '@chakra-ui/react';
-const CreateContestModal = ({ isOpen, onClose }) => {
+const CreateContestModal = ({ isOpen, onClose,fetchData }) => {
     const [isLoading, setisLoading] = useState(false);
     const [contestName, setContestName] = useState('');
     const [contestDescription, setContestDescription] = useState('');
     const [selectedDate, setSelectedDate] = useState('');
-    const [contestType, setContestType] = useState('free');
-    const [paidAmount, setPaidAmount] = useState('');
     const [image, setImage] = useState(null);
     const [croppedImage, setCroppedImage] = useState(null);
     const imageRef = useRef();
@@ -41,10 +36,6 @@ const CreateContestModal = ({ isOpen, onClose }) => {
 
     const handleDescriptionChange = (event) => {
         setContestDescription(event.target.value);
-    };
-
-    const handlePaidAmountChange = (event) => {
-        setPaidAmount(event.target.value);
     };
 
     const handleDateChange = (e) => {
@@ -76,23 +67,11 @@ const CreateContestModal = ({ isOpen, onClose }) => {
             return;
         }
 
-        if(contestType === 'paid'){
-            if(!paidAmount){
-                return toast.error("Please give amount")
-            }
-
-            if(paidAmount.length>4){
-                return toast.error("Amount is Not Valid,Only 4 Digts allowed")
-            }
-        }
-
         setisLoading(true);
 
         const postData = {
             name: contestName,
             description: contestDescription,
-            type: contestType,
-            Amount: contestType === 'paid' ? paidAmount : null,
             image: croppedImage,
             expiry:selectedDate
         };
@@ -101,6 +80,7 @@ const CreateContestModal = ({ isOpen, onClose }) => {
             .then(response => {
                 console.log('Contest creation successful' + response);
                 toast.success("Contest Created");
+                fetchData()
                 onClose();
             })
             .catch(error => {
@@ -126,7 +106,6 @@ const CreateContestModal = ({ isOpen, onClose }) => {
         if (!isOpen) {
             setContestName('');
             setContestDescription('');
-            setPaidAmount('');
             setImage(null);
             setCroppedImage(null);
             if (cropperRef.current) {
@@ -151,21 +130,6 @@ const CreateContestModal = ({ isOpen, onClose }) => {
                         <FormLabel>Contest Description:</FormLabel>
                         <Textarea maxLength={150} value={contestDescription} onChange={handleDescriptionChange} placeholder="Enter your contest description" />
                     </FormControl>
-                    <FormControl mt={4}>
-                        <FormLabel>Contest Type:</FormLabel>
-                        <RadioGroup defaultValue='free' onChange={(value) => setContestType(value)}>
-                            <HStack spacing={4}>
-                                <Radio value='free'>Free</Radio>
-                                <Radio value='paid'>Paid</Radio>
-                            </HStack>
-                        </RadioGroup>
-                    </FormControl>
-                    <Collapse in={contestType === 'paid'} unmountOnExit>
-                        <FormControl mt={4}>
-                            <FormLabel>Amount (if paid):</FormLabel>
-                            <Input type='number'  value={paidAmount} onChange={handlePaidAmountChange} placeholder='Enter amount' />
-                        </FormControl>
-                    </Collapse>
                     <FormControl mt={4}>
                         <FormLabel>Contest Image:</FormLabel>
                         <Input type="file" onChange={handleImageChange} />

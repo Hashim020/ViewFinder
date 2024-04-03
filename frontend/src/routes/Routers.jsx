@@ -25,6 +25,7 @@ import SearchUser from '../pages/userPages/SearchUser.jsx';
 import Settings from '../pages/userPages/Settings.jsx';
 import Chatpage from '../pages/userPages/ChatPage.jsx';
 import Contests from '../pages/userPages/Contests.jsx';
+import ViewContest from '../pages/userPages/ViewContest.jsx';
 
 
 
@@ -49,6 +50,7 @@ const Routers = () => {
                     <Route path='/settings/change-password' element={<Settings />} />
                     <Route path='/Messaging' element={<Chatpage />} />
                     <Route path='/Contests' element={<Contests />} />
+                    <Route path='/Contests-view/:contestId' element={<ViewContest />} />
                 </Route>
                 {/* Admin Route */}
                 <Route path='/admin' element={<AdminLoginPage />} />

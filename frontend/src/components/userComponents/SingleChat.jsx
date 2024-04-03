@@ -71,7 +71,7 @@ const SingleChat = () => {
             }
         };
 
-        fetchMessages(); // Fetch messages when component mounts or selectedChat/socketConnected changes
+        fetchMessages(); 
         selectedChatCompare = selectedChat;
     }, [selectedChat, socket, socketConnected, toast]);
 
@@ -108,7 +108,7 @@ const SingleChat = () => {
         if (socket) {
             socket.on("message recieved", (newMessageRecieved) => {
                 if (
-                    !selectedChatCompare || // if chat is not selected or doesn't match current chat
+                    !selectedChatCompare || 
                     selectedChatCompare._id !== newMessageRecieved.chat._id
                 ) {
                     if (!notification.includes(newMessageRecieved)) {
