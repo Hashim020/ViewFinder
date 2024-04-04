@@ -32,9 +32,9 @@ const createContest = asyncHandler(async (req, res) => {
   });
   
 
-const getContests = async (req, res) => {
+  const getContests = async (req, res) => {
     try {
-        const contests = await Contest.find().populate('createdBy');
+        const contests = await Contest.find({ isListed: true }).populate('createdBy');
         res.json(contests);
     } catch (error) {
         res.status(500).json({ message: error.message });

@@ -223,6 +223,28 @@ const reportPost = asyncHandler(async (req, res) => {
 });
 
 
+const showPost= asyncHandler(async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { page, limit } = req.query; // assuming 'page' and 'limit' are received from the frontend
+
+        const pageNumber = parseInt(page) || 1;
+        const limitNumber = parseInt(limit) || 10; // Defaulting to 10 if no limit is provided
+
+        const skip = (pageNumber - 1) * limitNumber;
+
+        const allPosts = await Post.find({ isListed: true })
+                                    .sort({ createdAt: -1 })
+                                    .skip(skip)
+                                    .limit(limitNumber)
+                                    .populate('userId');
+                                    
+        res.status(200).json({ success: true, data: allPosts, userId: userId });
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Server Error' });
+    }
+});
+
 
 export {
     createPost,
@@ -234,5 +256,6 @@ export {
     editPost,
     getPostForMadal,
     getLikedUsers,
-    reportPost
+    reportPost,
+    showPost
 };

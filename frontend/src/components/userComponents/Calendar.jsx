@@ -13,7 +13,7 @@ const CalendarUser = () => {
     <div className="flex fixed w-80 ml-[90px]   items-center justify-center  " data-aos="fade-right">
       <div className="bg-white p-6 rounded-xl ">
         <Calendar 
-          onChange={date => alert(date)}
+          // onChange={date => alert(date)}
           value={new Date()}
           className="calendar-custom"
         />

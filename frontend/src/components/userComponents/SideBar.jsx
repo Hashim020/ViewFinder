@@ -62,7 +62,7 @@ const SideBar = ({ fetchData, getUserPosts }) => {
     { href: '/Home', icon: FaHome, label: 'Home' },
     { href: '/search-user', icon: FaSearch, label: 'Search' },
     { href: '/Messaging ', icon: FaEnvelope, label: 'Messages' },
-    { href: '#', icon: FaBell, label: 'Notifications' },
+    { href: '/Notifications', icon: FaBell, label: 'Notifications' },
     { href: '#', icon: FaEdit, label: 'Create post', onClick: onOpen },
     { href: '/Contests', icon: FaTrophy, label: 'Contests' },
     { href: '/myProfile', icon: FaUser, label: 'Profile' },

@@ -8,6 +8,7 @@ import AdminLoginPage from '../pages/adminPages/AdminLoginPage.jsx';
 import AdminHome from '../pages/adminPages/AdminHome.jsx';
 import AdminUserManagement from '../pages/adminPages/AdminUserManagement.jsx';
 import AdminPostManagement from '../pages/adminPages/AdminPostManagement.jsx';
+import AdminContestManagement from '../pages/adminPages/AdminContestManagement.jsx';
 
 
 //------------------User-------------------------------
@@ -26,6 +27,7 @@ import Settings from '../pages/userPages/Settings.jsx';
 import Chatpage from '../pages/userPages/ChatPage.jsx';
 import Contests from '../pages/userPages/Contests.jsx';
 import ViewContest from '../pages/userPages/ViewContest.jsx';
+import Notifications from '../pages/userPages/Notifications.jsx';
 
 
 
@@ -51,8 +53,10 @@ const Routers = () => {
                     <Route path='/Messaging' element={<Chatpage />} />
                     <Route path='/Contests' element={<Contests />} />
                     <Route path='/Contests-view/:contestId' element={<ViewContest />} />
+                    <Route path='/notifications' element={<Notifications />} />
                 </Route>
                 {/* Admin Route */}
+                <Route path='/contest-management' element={<AdminContestManagement />} />
                 <Route path='/admin' element={<AdminLoginPage />} />
                 <Route path='/admin/Home' element={<AdminHome />} />
                 <Route path='/admin/user-management' element={<AdminUserManagement />} />

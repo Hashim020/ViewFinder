@@ -32,7 +32,8 @@ import {
   editPost,
   getPostForMadal,
   getLikedUsers,
-  reportPost
+  reportPost,
+  showPost
 } from "../controllers/userController/postController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import checkBlockedAndClearToken from "../middleware/userMiddleware/authAndBlockMiddleware.js";
@@ -56,7 +57,7 @@ import {
   createContest,
   getContests,
   userParticipation,
-  getSelectedContest
+  getSelectedContest,
 } 
 from '../controllers/userController/contestController.js' 
 
@@ -73,7 +74,7 @@ Router.post('/confirmResetPassword', confirmResetPW);
 Router.route('/profile').get(protect, checkBlockedAndClearToken, getUserProfile).put(protect, checkBlockedAndClearToken, updateUserProfile);
 Router.post("/change-PasswordSettings", protect, checkBlockedAndClearToken,changePasswordSettings)
 Router.post("/save-post", protect, checkBlockedAndClearToken, createPost);
-Router.post("/getuser-post", protect, checkBlockedAndClearToken, getUserPosts);
+Router.get("/getuser-post", protect, checkBlockedAndClearToken, getUserPosts);
 Router.get("/getotheruser-profile/:userId", protect, checkBlockedAndClearToken, getOtherUserProfile);
 Router.put("/profile-picture", protect, checkBlockedAndClearToken, updateProfilePicture);
 Router.put("/profileCover-picture", protect, checkBlockedAndClearToken, updateProfileCoverPicture);
@@ -91,6 +92,7 @@ Router.get("/get-followers/:userId", protect, checkBlockedAndClearToken, getFoll
 Router.get("/get-following/:userId", protect, checkBlockedAndClearToken, getFollowing);
 Router.get("/get-singlePost/:postId", protect, checkBlockedAndClearToken, getPostForMadal);
 Router.get("/get-likedusers/:postId", protect, checkBlockedAndClearToken, getLikedUsers);
+Router.get("/showAllPost", protect, checkBlockedAndClearToken, showPost);
 
 
 // =====================================chat=================================================

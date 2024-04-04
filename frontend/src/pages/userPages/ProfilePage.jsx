@@ -46,7 +46,7 @@ const ProfilePage = () => {
 
   const getUserPosts = async () => {
     try {
-      const response = await axios.post('/api/user/getuser-post');
+      const response = await axios.get('/api/user/getuser-post');
       setUserPosts(response.data.data);
       setpostCount(response.data.data.length);
     } catch (error) {

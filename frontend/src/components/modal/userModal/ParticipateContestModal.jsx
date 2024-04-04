@@ -20,7 +20,7 @@ const ParticipateContestModal = ({ isOpen, onClose, singleContestid ,fetchData})
 
     const getUserPosts = async () => {
         try {
-            const response = await axios.post('/api/user/getuser-post');
+            const response = await axios.get('/api/user/getuser-post');
             setUserPosts(response.data.data);
         } catch (error) {
             console.error('Error fetching user posts:', error);

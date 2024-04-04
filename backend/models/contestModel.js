@@ -19,6 +19,10 @@ const contestSchema = new Schema({
     ref: 'User', 
     required: true
   },
+  winner: {
+    type: Schema.Types.ObjectId,
+    ref: 'Post', 
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -36,6 +40,10 @@ const contestSchema = new Schema({
     ref: 'User'
   }],
   isActive: {
+    type: Boolean,
+    default: true
+  },
+  isListed: {
     type: Boolean,
     default: true
   }

@@ -44,7 +44,6 @@ const SideBar = () => {
     { href: '/admin/user-management', icon: FaUser, label: 'User Management' },
     { href: '/admin/post-management', icon: FaEnvelope, label: 'Post Management' },
     { href: '/contest-management', icon: FaTrophy, label: 'Contest Management' },
-    { href: '/reports', icon: FaChartBar, label: 'Reports' },
   ];
 
   return <SidebarComponent items={sidebarItems} />;
