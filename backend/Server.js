@@ -72,7 +72,7 @@ socketServer.on("connection", (socket) => {
     socket.off("setup", () => {
         console.log("USER DISCONNECTED");
         socket.leave(userData._id);
-      });
+    });
 });
 
 socketServer.on("error", (error) => {

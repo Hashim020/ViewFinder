@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import SideBar from '../../components/userComponents/SideBar';
 import UserPostListing from '../../components/userComponents/UserPostListing';
 import axios from '../../API/axios/axiosInstance.js';
@@ -8,7 +8,8 @@ const HomePage = () => {
   const [posts, setPosts] = useState([]);
   const [userId, setuserId] = useState(null);
   const [page, setPage] = useState(1);
-  const [limit,setlimit]=('3')
+  const [limit, setlimit] = ('5');
+useRef
   useEffect(() => {
     fetchData();
   }, []);
@@ -28,6 +29,8 @@ const HomePage = () => {
       console.error(error);
     }
   };
+  
+ 
 
   const showMore = async () => {
     try {
@@ -38,26 +41,26 @@ const HomePage = () => {
           limit: limit
         }
       });
-      setPosts([...posts,...result.data.data]);
+      setPosts([...posts, ...result.data.data]);
       setPage(nextPage);
     } catch (err) {
       console.log(err);
     }
   }
+
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
+    <div style={{ display: 'flex', height: '100vh' }} >
       <div style={{ flex: '0 0 auto', width: '250px', height: '100%', backgroundColor: '#f0f0f0' }}>
         <SideBar fetchData={fetchData} />
       </div>
 
-      <div className='ml-48'>
-        <UserPostListing posts={posts} fetchData={fetchData} userId={userId} />
+      <div className='ml-40' >
+        <UserPostListing posts={posts} fetchData={fetchData} userId={userId}  />
       </div>
       <InfiniteScroll
         dataLength={posts.length}
         next={showMore}
         hasMore={true}
-      // loader={<h4>Loading...</h4>}
       />
     </div>
 

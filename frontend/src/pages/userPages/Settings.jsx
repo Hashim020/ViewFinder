@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import ChangePassword from "../../components/userComponents/ChangePassword";
 import SideBar from "../../components/userComponents/SideBar";
 import { IoSettingsOutline } from "react-icons/io5";
-
+import Aos from 'aos'
+import '../../../node_modules/aos/dist/aos.css'
 
 const Settings = () => {
     const location = useLocation();
     const isChangePassword = location.pathname.endsWith("/change-password");
+
+    useEffect(()=>{
+        Aos.init()
+    },[])
 
     return (
         <div style={{ display: 'flex', height: '100vh', backgroundColor: 'white', color: 'black' }}>
@@ -16,7 +21,7 @@ const Settings = () => {
                 <SideBar />
             </div>
 
-            <div className='ml-8 flex-grow'>
+            <div className='ml-8 flex-grow' data-aos="fade-right">
                 <div className="flex">
                     <div className="-ml-[26px]  w-[380px] h-screen border-r flex flex-col bg-white">
                     <IoSettingsOutline className="text-3xl absolute mt-[15px] ml-1" />

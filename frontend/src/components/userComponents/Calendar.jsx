@@ -10,7 +10,7 @@ const CalendarUser = () => {
       Aos.init()
     })
   return (
-    <div className="flex fixed w-80 ml-[90px]   items-center justify-center  " data-aos="fade-right">
+    <div className="flex fixed w-80 ml-[130px]   items-center justify-center  " data-aos="flip-right">
       <div className="bg-white p-6 rounded-xl ">
         <Calendar 
           // onChange={date => alert(date)}

@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
+import Aos from 'aos'
+import '../../../node_modules/aos/dist/aos.css'
+
 
 const ChangePassword = () => {
     const [currentPassword, setCurrentPassword] = useState('');
@@ -65,8 +68,12 @@ const ChangePassword = () => {
     };
     
 
+    useEffect(()=>{
+        Aos.init()
+
+    })
     return (
-        <div className="w-full  mx-auto ml-0">
+        <div className="w-full  mx-auto ml-0" data-aos="fade-left">
             <h2 className="text-2xl font-bold m-5">Change Password</h2>
             <form onSubmit={handleSubmit} className="bg-white shadow-current rounded px-4 pt-6 pb-8 mb-4">
                 {/* Current Password */}

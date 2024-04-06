@@ -33,7 +33,7 @@ function LikedUsersModal({ isOpen, onClose, likedUsers }) {
             
             {likedUsers.map((lu) => (
               <>
-                <div className='flex' key={lu.id}>
+                <div className='flex' key={lu._id}>
                   {lu.profileImageUrl ? (
 
                     <img src={lu.profileImageUrl} alt="profile pix" className="w-10 h-10 rounded-full" />

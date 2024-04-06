@@ -134,7 +134,7 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
                     {post && (
                         <Flex>
                             <Box flex="1">
-                                <img src={post.image.url} alt="Uploaded" style={{ maxWidth: '100%' }} />
+                                <img src={post.image.url} alt="Uploaded" className='w-[460px]' style={{ maxWidth: '100%' }} />
                             </Box>
                             <Box flex="1" ml={4}>
                                 <FormControl mb={4}>

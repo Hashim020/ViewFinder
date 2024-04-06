@@ -9,17 +9,20 @@ import PostViewModal from '../../components/modal/userModal/PostViewModal';
 import LikedUsersModal from '../modal/userModal/LikedUsersModal.jsx';
 import Aos from 'aos'
 import '../../../node_modules/aos/dist/aos.css'
+
+
+
 const UserPostListing = ({ posts, fetchData, userId }) => {
     const { isOpen: isPostViewModalOpen, onOpen: onPostViewModalOpen, onClose: onPostViewModalClose } = useDisclosure();
     const { isOpen: isLikedUsersModalOpen, onOpen: onLikedUsersModalOpen, onClose: onLikedUsersModalClose } = useDisclosure();
+    const [isClick, setClick] = useState(false);
     const [reload, setReload] = useState(0);
     const [postId, setpostId] = useState(null);
     const navigate = useNavigate();
-    const [isClick, setClick] = useState(false);
-    const [likedUsers,setLikedUsers]= useState([]);
+    const [likedUsers, setLikedUsers] = useState([]);
     useEffect(() => {
         Aos.init()
-        fetchData();
+        fetchData()
     }, [reload]);
 
     const handleLikeUnlike = async (postId) => {
@@ -66,20 +69,20 @@ const UserPostListing = ({ posts, fetchData, userId }) => {
             return `${diffDays}d${diffDays > 1 ? '' : ''} ago`;
         }
     };
-    const handleGetLikesUsers = async (postID)=>{
+    const handleGetLikesUsers = async (postID) => {
         try {
-            const {data} = await axios.get(`/api/user/get-likedusers/${postID}`)
+            const { data } = await axios.get(`/api/user/get-likedusers/${postID}`)
             console.log(data);
             setLikedUsers(data)
             onLikedUsersModalOpen()
         } catch (error) {
-            
+
         }
     }
 
 
     return (
-        < div className='flex'>
+        < div className='flex ' >
             <div className="instagram-home-feed" >
                 <ul>
                     {posts.map((post) => (
@@ -91,7 +94,7 @@ const UserPostListing = ({ posts, fetchData, userId }) => {
                                 <h1 className='text-sm ml-1 text-gray-400  leading-[50px] '>{formatTimestamp(post.createdAt)}</h1>
                             </div>
                             <div className="post-content">
-                                <img className='max-w-lg rounded-2xl pt-3' onDoubleClick={() => handleLikeUnlike(post._id)} src={post.image.url} alt={post.caption.text} />
+                                <img className='max-w-lg rounded-2xl w-[450px] pt-3' onDoubleClick={() => handleLikeUnlike(post._id)} src={post.image.url} alt={post.caption.text} />
                                 <div className='flex flex-wrap'>
                                     <div className='-mt-[32px] -ml-8'>
                                         {post.likes.includes(userId) ? (
@@ -112,10 +115,10 @@ const UserPostListing = ({ posts, fetchData, userId }) => {
                                             />
                                         )}
                                     </div>
-                                    <FaRegComment onClick={() => handlePostClick(post._id)} className="mx-2 -ml-4 my-1 cursor-pointer hover:text-amber-500 rounded-md hover:shadow-lg hover:shadow-amber-500 " fontSize="1.7em" />
+                                    <FaRegComment onClick={() => handlePostClick(post._id)} className="mx-2 -ml-4 my-1 cursor-pointer hover:text-amber-500 rounded-md  " fontSize="1.7em" />
                                 </div>
                                 <div className='-mt-6 ml-1'>
-                                    <p onClick={()=>handleGetLikesUsers(post._id)}  className='cursor-pointer w-80 hover:text-amber-600'>{`Likes:${post.likes.length}`}</p>
+                                    <p onClick={() => handleGetLikesUsers(post._id)} className='cursor-pointer w-80 hover:text-amber-600'>{`Likes:${post.likes.length}`}</p>
                                     <p>{post.caption}</p>
                                 </div>
                                 <hr />
