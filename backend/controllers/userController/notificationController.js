@@ -1,24 +1,17 @@
-import Notification from "../../models/notificationsModel.js";
+import Notification from '../../models/notificationsModel.js';
 
-
-const createNotification = async(recipientId, senderId, notificationType, entityType, entityID, Postimage)=> {
+const getNotification = async (req, res) => {
     try {
-        const notification = new Notification({
-            recipientId,
-            senderId,
-            notificationType,
-            entityType,
-            entityID,
-            Postimage
-        });
-
-        await notification.save();
-        console.log('Notification created successfully.');
-    } catch (error) {
-        console.error('Error creating notification:', error);
+        const userId = req.user._id;
+        const notifications = await Notification.find({ receiver: userId })
+            .populate('sender', 'username profileImageName')
+            .populate('postId')
+            .sort({ timestamp: -1 });
+        res.status(200).json({ success: true, notifications });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Error fetching notifications' });
     }
-}
+};
 
-export{
-    createNotification
-}
+export { getNotification };

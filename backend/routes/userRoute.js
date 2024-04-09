@@ -61,7 +61,9 @@ import {
 } 
 from '../controllers/userController/contestController.js' 
 
-
+import {
+  getNotification
+} from '../controllers/userController/notificationController.js'
 
 
 Router.post('/signup', registerUser);
@@ -115,6 +117,13 @@ Router.post('/Contest/create',protect,checkBlockedAndClearToken,createContest);
 Router.get('/Contest/',protect,checkBlockedAndClearToken,getContests);
 Router.put('/Contest/participate',protect,checkBlockedAndClearToken,userParticipation);
 Router.get('/Contest/get-selected/:contestId',protect,checkBlockedAndClearToken,getSelectedContest);
+
+
+
+// ====================================Notification==========================================
+
+Router.get('/notification',protect,checkBlockedAndClearToken,getNotification);
+
 
 
 export default Router;

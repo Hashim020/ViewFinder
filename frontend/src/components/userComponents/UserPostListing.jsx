@@ -86,7 +86,7 @@ const UserPostListing = ({ posts, fetchData, userId }) => {
             <div className="instagram-home-feed" >
                 <ul>
                     {posts.map((post) => (
-                        <li key={post._id} data-aos="fade-right">
+                        <li key={post._id} data-aos="fade-up">
                             <div className="user-details pt-16 flex">
                                 <img onClick={() => handleUserProfileClick(post.userId._id)} className="w-12 h-12 rounded-full inline-block cursor-pointer" src={post.userId.profileImageName.url} alt={post.userId.name} />
                                 <p onClick={() => handleUserProfileClick(post.userId._id)} className='inline-block text-black ml-2 mt-3 cursor-pointer '>{post.userId.username}</p>
@@ -130,7 +130,7 @@ const UserPostListing = ({ posts, fetchData, userId }) => {
                 <LikedUsersModal isOpen={isLikedUsersModalOpen} onClose={onLikedUsersModalClose} likedUsers={likedUsers} />
             </div>
             <div >
-                <Calendar data-aos="zoom-out-up" />
+                <Calendar/>
             </div>
         </div>
     );

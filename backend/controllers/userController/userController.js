@@ -6,7 +6,8 @@ import otpgenerator from 'otp-generator';
 import { generateRandomUsername } from '../../utils/utils.js';
 import cloudinary from "../../config/cloudinary.js";
 import Post from '../../models/postModel.js'
-
+import Notification from '../../models/notificationsModel.js';
+import { handleEvent } from "../../config/eventHandler.js";
 
 
 //@desc Auth user/set token
@@ -435,6 +436,17 @@ const followUser = asyncHandler(async (req, res) => {
 
     userToFollow.followers.push(currentUser._id);
     await userToFollow.save();
+
+    const followNotification = new Notification({
+        type: 'follow',
+        content: `${req.user.username} started following you`,
+        sender: req.user._id,
+        receiver: userId
+    });
+
+    await followNotification.save();
+
+    handleEvent('notification', followNotification);
 
     res.status(200).json({ message: 'User followed successfully' });
 });

@@ -1,35 +1,34 @@
-import mongoose from "mongoose";
+import mongoose from'mongoose';
 
 const notificationSchema = new mongoose.Schema({
-	recipientId: {
-		type: String
+	type: {
+		type: String,
+		enum: ['post', 'comment', 'follow'],
 	},
-	senderId: {
+	content: {
 		type: String,
 		required: true
 	},
-	notificationType: {
-		type: String,
-		enum: ["like", "comment", "follow", "message", "admin", "request"],
+	postId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Post',
+	},
+	sender: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User',
 		required: true
 	},
-	entityType: {
-		type: String
+	receiver: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User',
+		required: true
 	},
-	entityID: {
-		type: String
-	},
-	Postimage: { type: String },
-	isRead: {
-		type: Boolean,
-		default: false
-	},
-	createdAt: {
+	timestamp: {
 		type: Date,
 		default: Date.now
 	}
 });
 
-const Notification = mongoose.model("Notification", notificationSchema);
+const Notification = mongoose.model('Notification', notificationSchema);
 
 export default Notification;

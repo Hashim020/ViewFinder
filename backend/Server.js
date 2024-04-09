@@ -3,11 +3,11 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { updateContestStatus } from './models/contestModel.js'
-
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import connectDB from "./config/db.js";
 import userRoutes from './routes/userRoute.js'
 import adminRoutes from './routes/adminRoute.js'
+import { eventEmitter } from "./config/eventHandler.js";
 
 const port = process.env.PORT || 5000;
 
@@ -68,6 +68,9 @@ socketServer.on("connection", (socket) => {
     socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
 
 
+    eventEmitter.on('notification', (postData) => {
+        socket.emit('notification', postData);
+    });
 
     socket.off("setup", () => {
         console.log("USER DISCONNECTED");

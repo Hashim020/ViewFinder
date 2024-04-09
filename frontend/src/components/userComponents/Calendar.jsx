@@ -6,14 +6,19 @@ import Aos from 'aos'
 import '../../../node_modules/aos/dist/aos.css'
 
 const CalendarUser = () => {
-    useEffect(()=>{
-      Aos.init()
-    })
+  useEffect(() => {
+    Aos.init()
+  })
+
+  const handleChange = async (date)=>{
+    alert(date)
+  }
+
   return (
-    <div className="flex fixed w-80 ml-[130px]   items-center justify-center  " data-aos="flip-right">
+    <div className="flex fixed w-80 ml-[130px]   items-center justify-center  " data-aos="zoom-in">
       <div className="bg-white p-6 rounded-xl ">
-        <Calendar 
-          // onChange={date => alert(date)}
+        <Calendar
+          onChange={date => handleChange(date)}
           value={new Date()}
           className="calendar-custom"
         />
