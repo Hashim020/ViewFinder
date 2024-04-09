@@ -1,3 +1,4 @@
+import path from 'path'
 import Express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -11,10 +12,17 @@ import { eventEmitter } from "./config/eventHandler.js";
 
 const port = process.env.PORT || 5000;
 
+const currentWorkingDir = path.resolve();
+const parentDir = path.dirname(currentWorkingDir);
+
+
+
 dotenv.config();
 connectDB();
 updateContestStatus()
 const app = Express();
+
+
 
 app.use(Express.json({ limit: '50mb' }));
 app.use(Express.urlencoded({ limit: '50mb', extended: true }));
@@ -24,7 +32,19 @@ app.use(cors());
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes)
 
-app.get('/', (req, res) => res.send("Server is Ready"));
+
+if (process.env.NODE_ENV === 'production'){
+    const __dirname = path.resolve();
+    app.use(Express.static(path.join(parentDir, "/frontend/dist")));
+ 
+    app.get("*", (req, res) =>
+      res.sendFile(path.resolve(parentDir, "frontend", "dist", "index.html"))
+    );
+ 
+ }else{
+ 
+   app.get("/", (req, res) => res.send("wayfarer is ready "));
+ }
 
 app.use(notFound);
 app.use(errorHandler);
