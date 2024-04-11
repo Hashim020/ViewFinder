@@ -12,14 +12,14 @@ import { eventEmitter } from "./config/eventHandler.js";
 
 const port = process.env.PORT || 5000;
 
-const currentWorkingDir = path.resolve();
-const parentDir = path.dirname(currentWorkingDir);
 
 
 
+const conectdb= async ()=>{
+   await connectDB();
+}
 dotenv.config();
-connectDB();
-updateContestStatus()
+conectdb()
 const app = Express();
 
 
@@ -33,18 +33,18 @@ app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes)
 
 
-if (process.env.NODE_ENV === 'production'){
+if (process.env.NODE_ENV === 'production') {
     const __dirname = path.resolve();
-    app.use(Express.static(path.join(parentDir, "/ViewFinder/frontend/dist")));
- 
+    app.use(Express.static(path.join(__dirname, "frontend/dist")));
+    
     app.get("*", (req, res) =>
-      res.sendFile(path.resolve(parentDir, "frontend", "dist", "index.html"))
-    );
- 
- }else{
- 
-   app.get("/", (req, res) => res.send(""));
- }
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
+);
+
+} else {
+    
+    app.get("/", (req, res) => res.send(""));
+}
 
 app.use(notFound);
 app.use(errorHandler);
@@ -53,6 +53,7 @@ import { Server } from 'socket.io';
 
 const server = app.listen(port, () => console.log(`Server Is Running http://localhost:${port}`));
 
+updateContestStatus()
 const socketServer = new Server(server, {
     pingTimeout: 60000,
     cors: {
@@ -62,36 +63,36 @@ const socketServer = new Server(server, {
 
 socketServer.on("connection", (socket) => {
     console.log("connected to socket.io");
-
+    
     socket.on('setup', (userData) => {
         socket.join(userData._id);
         socket.emit('connected');
     })
-
+    
     socket.on('join chat', (room) => {
         socket.join(room);
         console.log("user joined room" + room);
     })
-
+    
     socket.on("new message", (newMessageRecieved) => {
         var chat = newMessageRecieved.chat;
-
+        
         if (!chat.users) return console.log("chat.users not defined");
-
+        
         chat.users.forEach((user) => {
             if (user._id == newMessageRecieved.sender._id) return;
-
+            
             socket.in(user._id).emit("message recieved", newMessageRecieved);
         });
     });
     socket.on("typing", (room) => socket.in(room).emit("typing"));
     socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
-
-
+    
+    
     eventEmitter.on('notification', (postData) => {
         socket.emit('notification', postData);
     });
-
+    
     socket.off("setup", () => {
         console.log("USER DISCONNECTED");
         socket.leave(userData._id);
