@@ -35,7 +35,7 @@ app.use('/api/admin', adminRoutes)
 
 if (process.env.NODE_ENV === 'production'){
     const __dirname = path.resolve();
-    app.use(Express.static(path.join(parentDir, "/frontend/dist")));
+    app.use(Express.static(path.join(parentDir, "/ViewFinder/frontend/dist")));
  
     app.get("*", (req, res) =>
       res.sendFile(path.resolve(parentDir, "frontend", "dist", "index.html"))
@@ -43,7 +43,7 @@ if (process.env.NODE_ENV === 'production'){
  
  }else{
  
-   app.get("/", (req, res) => res.send("wayfarer is ready "));
+   app.get("/", (req, res) => res.send(""));
  }
 
 app.use(notFound);

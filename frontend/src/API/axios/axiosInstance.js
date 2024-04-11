@@ -1,5 +1,6 @@
 import axios from 'axios';
-const baseURL="http://localhost:3000"
+
+const baseURL = "http://localhost:5000";
 const instance = axios.create({
   baseURL: baseURL,
   timeout: 10000,
@@ -7,5 +8,7 @@ const instance = axios.create({
     'Content-Type': 'application/json',
   }
 });
+
+
 
 export default instance;

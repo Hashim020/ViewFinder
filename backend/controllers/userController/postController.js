@@ -271,10 +271,10 @@ const reportPost = asyncHandler(async (req, res) => {
 const showPost = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
-        const { page, limit } = req.query; // assuming 'page' and 'limit' are received from the frontend
+        const { page, limit } = req.query; 
 
         const pageNumber = parseInt(page) || 1;
-        const limitNumber = parseInt(limit) || 10; // Defaulting to 10 if no limit is provided
+        const limitNumber = parseInt(limit) || 10; 
 
         const skip = (pageNumber - 1) * limitNumber;
 
