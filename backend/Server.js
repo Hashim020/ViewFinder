@@ -59,7 +59,7 @@ updateContestStatus()
 const socketServer = new Server(server, {
     pingTimeout: 60000,
     cors: {
-        origin: "http://localhost:3000"
+        origin: "https://www.hashimlive.online/"
     }
 });
 
