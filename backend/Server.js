@@ -12,7 +12,7 @@ import { eventEmitter } from "./config/eventHandler.js";
 
 const port = process.env.PORT || 5000;
 
-const currentWorkingDir = path.resolve("ViewFinder");
+const currentWorkingDir = path.resolve();
 const parentDir = path.dirname(currentWorkingDir);
 
 
