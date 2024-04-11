@@ -8,7 +8,7 @@ export default defineConfig({
     port:3000,
     proxy:{
       '/api':{
-        target: 'http://3.110.35.122:5000',
+        target: 'https://www.hashimlive.online/',
         changeOrigin:true,
       }
     }

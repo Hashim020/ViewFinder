@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = "http://3.110.35.122:5000";
+const baseURL = "https://www.hashimlive.online/";
 const instance = axios.create({
   baseURL: baseURL,
   timeout: 10000,
