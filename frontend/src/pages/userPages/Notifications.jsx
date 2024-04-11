@@ -11,7 +11,7 @@ const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [reload, setReload] = useState(false);
 
-  const socket = socketIOClient('http://localhost:5000');
+  const socket = socketIOClient('https://www.hashimlive.online');
   socket.on('notification', () => {
     if (!reload) {
       setReload(true);
