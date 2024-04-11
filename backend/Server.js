@@ -11,6 +11,7 @@ import adminRoutes from './routes/adminRoute.js'
 import { eventEmitter } from "./config/eventHandler.js";
 
 const port = process.env.PORT || 5000;
+
 const currentWorkingDir = path.resolve();
 const parentDir = path.dirname(currentWorkingDir);
 
@@ -36,10 +37,10 @@ app.use('/api/admin', adminRoutes)
 
 if (process.env.NODE_ENV === 'production') {
     const __dirname = path.resolve();
-    app.use(Express.static(path.join(parentDir, "/ViewFinder/frontend/dist")));
+    app.use(Express.static(path.join(__dirname, "/frontend/dist")));
     
     app.get("*", (req, res) =>
-    res.sendFile(path.resolve(parentDir, "frontend", "dist", "index.html"))
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
 );
 
 } else {

@@ -5,7 +5,6 @@ import Comments from '../../userComponents/Comments';
 import { toast } from 'react-toastify';
 import { TfiMoreAlt } from "react-icons/tfi";
 import { useSelector } from 'react-redux';
-import EmojiPicker from 'emoji-picker-react';
 import ReportPostModal from './ReportPostMadal'
 
 const PostViewModal = ({ isOpen, onClose, postId }) => {
