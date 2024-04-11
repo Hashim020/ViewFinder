@@ -26,7 +26,7 @@ const SingleChat = () => {
     const [isTyping, setIstyping] = useState(false)
 
 
-    const ENDPOINT = "http://localhost:5000";
+    const ENDPOINT = "https://www.hashimlive.online";
 
 
 
