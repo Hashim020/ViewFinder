@@ -58,7 +58,7 @@ const SetCoverPicture = ({ isOpen, onClose,getUserData }) => {
             .then(response => {
                 console.log('Post successful' + response);
                 toast.success("Post Added");
-                getUserData()
+                getUserData();
                 onClose();
             })
             .catch(error => {

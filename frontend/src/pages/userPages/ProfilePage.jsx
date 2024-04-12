@@ -58,7 +58,7 @@ const ProfilePage = () => {
     getUserData();
     getUserPosts();
     Aos.init()
-  }, [isEditProfileModalOpen, isSetProfilePictureModalOpen]);
+  }, [isEditProfileModalOpen, isSetProfilePictureModalOpen,isSetCoverPictureOpen]);
 
   const handleGetFollowers = async (id) => {
     try {
