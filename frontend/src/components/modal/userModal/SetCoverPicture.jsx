@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 
-const SetCoverPicture = ({ isOpen, onClose }) => {
+const SetCoverPicture = ({ isOpen, onClose,getUserData }) => {
     const [isLoading, setisLoading] = useState(false)
     const [image, setImage] = useState(null);
     const [croppedImage, setCroppedImage] = useState(null);
@@ -58,6 +58,7 @@ const SetCoverPicture = ({ isOpen, onClose }) => {
             .then(response => {
                 console.log('Post successful' + response);
                 toast.success("Post Added");
+                getUserData()
                 onClose();
             })
             .catch(error => {

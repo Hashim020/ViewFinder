@@ -157,7 +157,7 @@ const ProfilePage = () => {
       </div>
       <EditProfileModal isOpen={isEditProfileModalOpen} onClose={onEditProfileModalClose} userDATA={userDATA} />
       <SetProfilePicture isOpen={isSetProfilePictureModalOpen} onClose={onSetProfilePictureModalClose} />
-      <SetCoverPicture isOpen={isSetCoverPictureOpen} onClose={onSetSetCoverPictureClose} />
+      <SetCoverPicture isOpen={isSetCoverPictureOpen} onClose={onSetSetCoverPictureClose} getUserData={getUserData} />
       <PostViewModal isOpen={isPostViewModalOpen} onClose={onPostViewModalClose} userPosts={userPosts} postId={postId} />
       <FollowersModal isOpen={isFollowersModalOpen} onClose={onFollowersModalClose} followers={followers} />
       <FollowingsModal isOpen={isFollowingsModalOpen} onClose={onFollowingsModalClose} followings={followings} />

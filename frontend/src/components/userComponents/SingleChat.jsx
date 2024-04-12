@@ -26,7 +26,7 @@ const SingleChat = () => {
     const [isTyping, setIstyping] = useState(false)
 
 
-    const ENDPOINT = "https://www.hashimlive.online";
+    const ENDPOINT = "https://www.hashimlive.online/";
 
 
 
