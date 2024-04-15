@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Flex, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Button, useDisclosure, Text } from '@chakra-ui/react';
 import { useAdminLogoutMutation } from '../../../Slices/adminApiSlice';
-import { logout } from '../../../Slices/adminAuthSlice';
+import { Logout } from '../../../Slices/adminAuthSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,7 +21,7 @@ function SidBarModal({ overlayOneContent }) {
     async function handleLogout (){
         try {
             await Logout().unwrap();
-            dispatch(logout());
+            dispatch(Logout());
             navigate('/admin')
           } catch (error) {
             console.log(error);
