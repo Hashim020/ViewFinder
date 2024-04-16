@@ -16,12 +16,12 @@ const ChangePassword = () => {
         confirmPassword: '',
         backend: '',
     });
-
     const handleSubmit = async (e) => {
         e.preventDefault();
     
         let errorsObj = {};
         const spaceRegex = /\s/; 
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
     
         if (currentPassword === '') {
             errorsObj.currentPassword = 'Please enter your current password.';
@@ -31,8 +31,8 @@ const ChangePassword = () => {
     
         if (newPassword === '') {
             errorsObj.newPassword = 'Please enter a new password.';
-        } else if (newPassword.length < 8) {
-            errorsObj.newPassword = 'Password must be at least 8 characters long.';
+        } else if (!passwordRegex.test(newPassword)) {
+            errorsObj.newPassword = 'Password should contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.';
         } else if (spaceRegex.test(newPassword)) {
             errorsObj.newPassword = 'Password cannot contain spaces.';
         }
@@ -66,6 +66,7 @@ const ChangePassword = () => {
             }
         }
     };
+    
     
 
     useEffect(()=>{

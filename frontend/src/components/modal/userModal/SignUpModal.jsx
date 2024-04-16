@@ -22,7 +22,7 @@ const SignUpModal = ({ isOpen, onClose, handleSignUp }) => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
 
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{6,}$/;
+    const passwordRegex =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
 
     const handleSubmit = () => {
         if (!gender || !birthdate || !password || !confirmPassword) {
@@ -35,7 +35,7 @@ const SignUpModal = ({ isOpen, onClose, handleSignUp }) => {
         }
         
         if (!password.match(passwordRegex)) {
-            setError("Password must have at least one lowercase, one uppercase, one digit, one special character, and be at least 6 characters long");
+            setError("Password should contain atleast 8 characters ,One Uppercase number and a special character");
             return;
         }
         const userData = {
