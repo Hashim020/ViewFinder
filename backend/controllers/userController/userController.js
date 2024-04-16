@@ -8,7 +8,7 @@ import cloudinary from "../../config/cloudinary.js";
 import Post from '../../models/postModel.js'
 import Notification from '../../models/notificationsModel.js';
 import { handleEvent } from "../../config/eventHandler.js";
-
+import { validateEmail } from '../../utils/emailValidation.js';
 
 //@desc Auth user/set token
 // route POST /api/users/auth
@@ -140,6 +140,12 @@ const registerOtpVerifiedUser = asyncHandler(async (req, res) => {
 const googleRegister = asyncHandler(async (req, res) => {
     const { firstName, lastName, email, profileImageName } = req.body;
     const fullName = firstName + lastName;
+
+    const isEmailValid = validateEmail(email);
+    if (!isEmailValid) {
+        return res.status(400).json({ message: 'Invalid email format' });
+    }
+
 
     try {
         let user = await User.findOne({ email });
