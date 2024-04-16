@@ -126,7 +126,6 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
                             {postUserId==currentUserId ? 
                             < div className=' flex flex-col'>
                             <a variant="outline" className='cursor-pointer text-blue-700 hover:text-yellow-500' onClick={handleEditPost}>Edit Post</a>
-                            <a className='text-red-600 cursor-pointer hover:shadow-lg hover:shadow-red-400 shadow-transparent rounded-lg' >Delete post</a>
                             </div>
                             :
                             <a onClick={()=>{onReportPostModalOpen()}} className='text-red-700 rounded-sm hover:shadow-inner hover:shadow-red-400 cursor-pointer'>Report</a>

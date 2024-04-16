@@ -158,7 +158,7 @@ const getPostComments = asyncHandler(async (req, res) => {
         console.log(postId);
 
 
-        const post = await Post.findById(postId).populate({
+        const post = await Post.findById(postId).sort({ createdAt: -1 }).populate({
             path: 'comments',
             populate: {
                 path: 'userId',
