@@ -54,6 +54,10 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
     };
 
     const handlePostComment = async () => {
+        if (!content.trim()) {
+            toast.error("Please enter a non-empty comment before posting");
+            return; 
+        }
         try {
             const response = await axios.post(`/api/user/post-comment`, { content, POSTID: postId });
             if (response.data.success === "true") {
@@ -64,6 +68,7 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
             console.error('Error posting comment:', error.response.data);
         }
     };
+    
 
     const handleEditPost = () => {
         setEditedCaption(post ? post.caption : "");
