@@ -10,8 +10,8 @@ const ViewContest = () => {
   const { contestId } = useParams();
   const [contest, setContest] = useState({});
   const [daysLeft, setDaysLeft] = useState(null);
-  const [entrie,setEntries]= useState(null);
-  const [peoples,setpeoples]= useState(null)
+  const [entrie, setEntries] = useState(null);
+  const [peoples, setpeoples] = useState(null)
 
   const fetchContest = async () => {
     try {
@@ -62,7 +62,14 @@ const ViewContest = () => {
             <div>
               <h1 className='text-center text-2xl text-yellow-600'>Powerd by viewFinder</h1>
               <hr className='w-[290px] pb-3' />
-              {daysLeft !== null && <p className="text-gray-700 ">Expires in: <span className='font-extrabold'>{daysLeft}</span> days to enter</p>}
+              {daysLeft !== null && (
+                <p className="text-gray-700">
+                  Expires in:{" "}
+                  <span className='font-extrabold'>
+                    {daysLeft < 0 ? 0 : daysLeft} days to enter
+                  </span>
+                </p>
+              )}              
               <p className="text-gray-700 "><span className='font-extrabold'>{entrie}</span> Photos Entered </p>
               <p className="text-gray-700 "><span className='font-extrabold'>{peoples}</span> photographers</p>
             </div>
@@ -71,7 +78,7 @@ const ViewContest = () => {
           <div className='w-[600px]'>
             {contest.participation && contest.participation.map((participation) => (
               <Image
-                key={participation._id} 
+                key={participation._id}
                 src={participation.image.url}
               />
             ))}
