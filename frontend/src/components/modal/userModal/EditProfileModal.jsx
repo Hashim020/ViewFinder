@@ -15,7 +15,8 @@ import {
     FormControl,
     FormLabel,
     Input,
-    Select
+    Select,
+    Spinner
 } from '@chakra-ui/react';
 
 const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
@@ -68,7 +69,7 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
             if (!emailRegex.test(email)) {
                 setError("Enter a Valid Email");
                 return
-            }else{
+            } else {
                 setError("")
             }
             const trimedpw = password.trim();
@@ -78,9 +79,10 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
             }
 
 
-
+            const [isLoading, setloading] = useState(false)
 
             if (email !== userDATA.email) {
+                setloading(true)
                 const otpResponse = await axios.get('/api/user/otp-generateForeditProfile', {
                     params: { email }
                 });
@@ -114,7 +116,8 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
             const resp = response.data;
             console.log(resp.success);
             if (resp.success === "true") {
-                toast.success("Successfully Updated")
+                toast.success("Successfully Updated");
+                setloading(false)
                 onClose();
                 setError('');
             }
@@ -168,9 +171,9 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
                         <Button colorScheme='blue' mr={3} onClick={onClose}>
                             Close
                         </Button>
-                        <Button variant='ghost' onClick={handleSave} >
+                        {isLoading ? (<Spinner />) : (<Button variant='ghost' onClick={handleSave} >
                             Save
-                        </Button>
+                        </Button>)}
                     </ModalFooter>
                 </ModalContent>
             </Modal>
@@ -186,7 +189,7 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
 
 const OtpVerificationModal = ({ isOpen, onClose, otpData, onVerifyOTP }) => {
     const [otp, setOtp] = useState('');
-    const [error,setError]= useState("")
+    const [error, setError] = useState("")
     const handleChange = (e) => {
         setOtp(e.target.value);
     };
