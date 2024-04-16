@@ -20,6 +20,7 @@ import {
 } from '@chakra-ui/react';
 
 const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
+    const [isLoading, setloading] = useState(false)
     const navigate = useNavigate();
     const [updateUserProfile, { isLoading: isUpdateLoading }] = useUpdateUserProfileMutation();
     const [userData, setUserData] = useState({
@@ -79,7 +80,6 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
             }
 
 
-            const [isLoading, setloading] = useState(false)
 
             if (email !== userDATA.email) {
                 setloading(true)
