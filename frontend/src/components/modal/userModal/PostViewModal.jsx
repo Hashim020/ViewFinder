@@ -28,10 +28,7 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
         }
     })
 
-    useEffect(()=>{
-        setContent("");
-        editedCaption("")
-    },[onClose])
+   
     const fetchPost = async (postId, setPost) => {
         try {
             const response = await axios.get(`/api/user/get-singlePost/${postId}`);
@@ -67,6 +64,7 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
             if (response.data.success === "true") {
                 toast.success("Comment posted successfully");
                 fetchComments();
+                setContent("")
             }
         } catch (error) {
             console.error('Error posting comment:', error.response.data);
