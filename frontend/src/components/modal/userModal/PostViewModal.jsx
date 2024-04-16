@@ -28,6 +28,10 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
         }
     })
 
+    useEffect(()=>{
+        setContent("");
+        editedCaption("")
+    },[onClose])
     const fetchPost = async (postId, setPost) => {
         try {
             const response = await axios.get(`/api/user/get-singlePost/${postId}`);
