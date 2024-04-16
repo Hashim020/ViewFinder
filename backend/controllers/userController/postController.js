@@ -99,6 +99,10 @@ const postComment = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
         const { content, POSTID } = req.body
+        if (!content.trim()) {
+            toast.error("Please enter a non-empty comment before posting");
+            return; 
+        }
 
         if (!content || !POSTID) {
             return res.status(400).json({ success: false, error: 'Content and postId are required' });
