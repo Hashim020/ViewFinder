@@ -92,6 +92,7 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
                 if (otpData.success === "true") {
                     setOtpData(otpData);
                     setOtpModalOpen(true);
+                    setloading(false)
                     setError('');
                 } else {
                     setError("Failed to send OTP to your new email.");
