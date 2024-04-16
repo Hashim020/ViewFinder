@@ -76,6 +76,7 @@ const SignUpModal = ({ isOpen, onClose, handleSignUp }) => {
                                     type="date"
                                     value={birthdate}
                                     onChange={(e) => setBirthdate(e.target.value)}
+                                    max={new Date().toISOString().split('T')[0]} 
                                 />
                             </FormControl>
 

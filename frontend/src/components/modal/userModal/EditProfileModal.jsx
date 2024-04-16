@@ -64,7 +64,7 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
                 setError("No changes to save");
                 return;
             }
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 setError("Enter a Valid Email");
                 return
