@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Cookies from 'js-cookie'; 
 
 const baseURL = "https://www.hashimlive.online";
 const instance = axios.create({
@@ -9,6 +10,10 @@ const instance = axios.create({
   }
 });
 
+const token = Cookies.get('jwt'); 
 
+if (token) {
+  instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
 
 export default instance;
