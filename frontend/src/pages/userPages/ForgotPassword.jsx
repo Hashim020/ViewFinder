@@ -20,7 +20,7 @@ const ForgotPasswordPage = () => {
     setIsLoading(true);
     setErrorMessage(null);
     try {
-      const response = await axios.post('http://localhost:5000/api/user/forgot-password', { email });
+      const response = await axios.post('api/user/forgot-password', { email });
       setIsOtpSent(true);
       toast.success("OTP sent successfully. Please check your email.");
       setshowResend("true")
