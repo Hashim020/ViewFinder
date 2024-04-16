@@ -6,7 +6,9 @@ import User from '../../models/userModel.js'
 const createContest = asyncHandler(async (req, res) => {
     const { name, description, expiry, image } = req.body;
     const createdBy = req.user._id;
-  
+    if(!name || !description || !expiry || !image){
+      return res.status(404).json({ message: 'Fill required feilds' });
+    }
     try {
       const result = await cloudinary.uploader.upload(image, {
         folder: "Contest",

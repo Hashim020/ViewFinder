@@ -10,7 +10,9 @@ import Notification from "../../models/notificationsModel.js";
 
 const createPost = asyncHandler(async (req, res) => {
     const { caption, image } = req.body;
-
+    if (!caption || !image) {
+        return res.status(400).json({ message: 'Add required feilds' });
+    }
     const userId = req.user._id;
 
     const result = await cloudinary.uploader.upload(image, {
@@ -100,8 +102,7 @@ const postComment = asyncHandler(async (req, res) => {
         const userId = req.user._id;
         const { content, POSTID } = req.body
         if (!content.trim()) {
-            toast.error("Please enter a non-empty comment before posting");
-            return; 
+            return res.status(400).json({ message: 'Add required feilds' });
         }
 
         if (!content || !POSTID) {
@@ -123,7 +124,7 @@ const postComment = asyncHandler(async (req, res) => {
 
         post.comments.push(savedComment._id);
         await post.save();
-        
+
         const userIdString = userId.toString();
         const postUserIdString = post.userId.toString();
 
@@ -248,7 +249,9 @@ const getLikedUsers = asyncHandler(async (req, res) => {
 const reportPost = asyncHandler(async (req, res) => {
     const { reason, postId } = req.body;
     const userId = req.user._id;
-
+    if(!reason || !postId){
+        return res.status(400).json({ message: 'Add required feilds' });
+    }
     try {
         const post = await Post.findById(postId);
 
@@ -275,10 +278,10 @@ const reportPost = asyncHandler(async (req, res) => {
 const showPost = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
-        const { page, limit } = req.query; 
+        const { page, limit } = req.query;
 
         const pageNumber = parseInt(page) || 1;
-        const limitNumber = parseInt(limit) || 10; 
+        const limitNumber = parseInt(limit) || 10;
 
         const skip = (pageNumber - 1) * limitNumber;
 

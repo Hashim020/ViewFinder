@@ -69,7 +69,7 @@ const Notifications = () => {
           {notifications.length > 0 ? (
             <>
               {notifications.some(notification => categorizeNotifications(notification) === 'Just Now') && (
-                <p className='font-bold ml-2'>this week</p>
+                <p className='font-bold ml-2'>Just Now</p>
               )}
               {notifications.filter(notification => categorizeNotifications(notification) === 'Just Now').map((notification, index) => (
                 <div key={index} className='flex items-center justify-between p-4 border-b'>
@@ -85,7 +85,7 @@ const Notifications = () => {
                   }                </div>
               ))}
               {notifications.some(notification => categorizeNotifications(notification) === 'Today') && (
-                <p className='font-bold ml-2'>this week</p>
+                <p className='font-bold ml-2'>today</p>
               )}
               {notifications.filter(notification => categorizeNotifications(notification) === 'Today').map((notification, index) => (
                 <div key={index} className='flex items-center justify-between p-4 border-b'>
@@ -117,7 +117,7 @@ const Notifications = () => {
                   }                </div>
               ))}
                {notifications.some(notification => categorizeNotifications(notification) === 'This Month') && (
-                <p className='font-bold ml-2'>this week</p>
+                <p className='font-bold ml-2'>This Month</p>
               )}
               {notifications.filter(notification => categorizeNotifications(notification) === 'This Month').map((notification, index) => (
                 <div key={index} className='flex items-center justify-between p-4 border-b'>

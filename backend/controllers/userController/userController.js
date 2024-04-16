@@ -16,6 +16,9 @@ import { validateEmail } from '../../utils/emailValidation.js';
 const authUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
+    if(!email || !password ){
+        return res.status(400).json({ message: 'Add required feilds' });
+    }
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
@@ -47,7 +50,9 @@ const authUser = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password, gender, username, birthdate } = req.body;
 
-
+    if(!name|| !email || !password || !gender || !username || !birthdate){
+        return res.status(400).json({ message: 'Add required feilds' });
+    }
     const userExistsByEmail = await User.findOne({ email });
     if (userExistsByEmail) {
         res.status(400);
@@ -101,6 +106,9 @@ const registerUser = asyncHandler(async (req, res) => {
 const registerOtpVerifiedUser = asyncHandler(async (req, res) => {
     const { name, email, password, gender, username, birthdate } = req.body;
 
+    if(!name|| !email || !password || !gender || !username || !birthdate){
+        return res.status(400).json({ message: 'Add required feilds' });
+    }
 
     const userExists = await User.findOne({ email });
 
@@ -286,6 +294,9 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 const forgotPassword = asyncHandler(async (req, res) => {
     const { email } = req.body;
 
+    if(!email){
+        return res.status(400).json({ message: 'Add required feilds' });
+    }
 
     const existingUser = await User.findOne({ email });
 
@@ -331,7 +342,9 @@ const forgotPassword = asyncHandler(async (req, res) => {
 const confirmResetPW = asyncHandler(async (req, res) => {
     const { email, newPassword } = req.body;
 
-
+    if(!email || !newPassword){
+        return res.status(400).json({ message: 'Add required feilds' });
+    }
     const user = await User.findOne({ email });
 
 
@@ -562,7 +575,6 @@ const getFollowing = asyncHandler(async (req, res) => {
 
 
 const changePasswordSettings = asyncHandler(async (req, res) => {
-    console.log("dsoifhasflkasdjflaskdfkalsdfksdfkjkasfh")
     const { currentPassword, newPassword } = req.body;
     const userId = req.user._id; 
   
