@@ -17,9 +17,9 @@ const ConfirmResetPW = () => {
     setIsLoading(true);
     setErrorMessage(null);
 
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{6,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
     if (!newPassword.match(passwordRegex)) {
-      setErrorMessage("Password must have at least one lowercase, one uppercase, one digit, one special character, and be at least 6 characters long");
+      setErrorMessage("Password must have at least one lowercase, one uppercase, one digit, one special character, and be at least 8 characters long");
       return;
     }
     try {
@@ -27,7 +27,7 @@ const ConfirmResetPW = () => {
         return setErrorMessage("password not matching");
       }
 
-      const response = await axios.post('http://localhost:5000/api/user/confirmResetPassword', { email, newPassword });
+      const response = await axios.post('api/user/confirmResetPassword', { email, newPassword });
       console.log(response.data);
       toast.success("Password changed successfully.");
       const data = response.data;
