@@ -68,6 +68,8 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
             if (!emailRegex.test(email)) {
                 setError("Enter a Valid Email");
                 return
+            }else{
+                setError("")
             }
             const trimedpw = password.trim();
             if (!name || !email || !dateOfBirth || !gender) {
