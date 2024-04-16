@@ -33,6 +33,7 @@ const SignUpModal = ({ isOpen, onClose, handleSignUp }) => {
             setError("Passwords do not match");
             return;
         }
+        
         if (!password.match(passwordRegex)) {
             setError("Password must have at least one lowercase, one uppercase, one digit, one special character, and be at least 6 characters long");
             return;
