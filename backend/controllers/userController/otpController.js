@@ -62,7 +62,7 @@ const verifyOtpChangeEmail = async (req, res) => {
             
             return res.status(200).json({ message: 'OTP verified successfully', success: "true" });
         } else {
-            return res.status(400).json({ message: 'Invalid OTP', success: "false" });
+            return res.status(404).json({ message: 'Invalid OTP', success: "false" });
         }
     } catch (error) {
         console.error(error);
