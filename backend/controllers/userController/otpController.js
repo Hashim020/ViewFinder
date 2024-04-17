@@ -1,15 +1,22 @@
 import otpgenerator from 'otp-generator';
 import nodemailer from 'nodemailer';
+import User from '../../models/userModel';
 
 
 
 
-
-const editProfileSendOtp = async (req,res)=>{
+const editProfileSendOtp = async (req, res) => {
     try {
         const { email } = req.query;
         console.log(email);
         const otp = otpgenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
+
+        const user = await User.findOneAndUpdate({ email: email }, { otp: otp }, { new: true });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -32,7 +39,8 @@ const editProfileSendOtp = async (req,res)=>{
             success: "true",
         });
     } catch (error) {
-        
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 }
 
