@@ -123,7 +123,7 @@ const AdminPostManagement = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {fetchedData
+                            {fetchedData && fetchedData
                                 .filter(post => (
                                     (!searchTerm || post.caption.toLowerCase().includes(searchTerm.toLowerCase()))
                                 ))
