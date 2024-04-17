@@ -65,7 +65,7 @@ const AdminPostManagement = () => {
             });
     
             if (result.isConfirmed) {
-                const response = await axios.put(`http://localhost:3000/api/admin/posts-unlistlist${postId}`);
+                const response = await axios.put(`/api/admin/posts-unlistlist${postId}`);
                 toast.success("Action Applied");
                 setFetchedData(prevData => {
                     return prevData.map(post => {
