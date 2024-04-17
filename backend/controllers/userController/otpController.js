@@ -8,16 +8,17 @@ import User from '../../models/userModel.js'
 const editProfileSendOtp = async (req, res) => {
     try {
         const { email } = req.query;
-        console.log(email);
+        
         const otp = otpgenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
 
-        const user = await User.findOneAndUpdate({ email: email }, { otp: otp }, { new: true });
+        const userId = req.user._id; // Get the user ID from the request
+        const user = await User.findById(userId); // Find the user by ID
 
-        console.log(user);
         if (!user) {
+            // Handle case where user with provided email is not found
             return res.status(404).json({ message: 'User not found' });
         }
-
+       
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -32,8 +33,13 @@ const editProfileSendOtp = async (req, res) => {
             text: `Your OTP is: ${otp}. Please enter this OTP to confirm your account.`,
         };
 
+        
         await transporter.sendMail(mailOptions);
         console.log('Email sent successfully');
+
+        user.otp = otp;
+        await user.save();
+        
         res.status(200).json({
             message: 'OTP sent successfully. Please check your email for confirmation.',
             otp: otp,
