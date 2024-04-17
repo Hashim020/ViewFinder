@@ -37,7 +37,7 @@ const ReportsModal = ({ isOpen, onClose, postId }) => {
                     <hr />
                     <ModalCloseButton />
                     <ModalBody>
-                        {reports.map((report) => (
+                        { reports && reports.map((report) => (
                             <div key={report._id} className='flex'>
                                 <p><strong>Reason:</strong> {report.reason}</p>
                                 <p><strong>Reported By:</strong> {report.userId.username}</p>
