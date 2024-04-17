@@ -192,18 +192,20 @@ const OtpVerificationModal = ({ isOpen, onClose, onVerifyOTP }) => {
     };
 
     const handleVerify = async () => {
-        const response = await axios.get("/api/user/otp-verify-emailChange", {
-            params: {
-                otp: otp,
+        try {
+            const response = await axios.get("/api/user/otp-verify-emailChange", {
+                params: {
+                    otp: otp,
+                }
+            })
+            console.log(response);
+            if (response.data.success == "true") {
+                onVerifyOTP(otp);
+                onClose()
             }
-        })
-        console.log(response);
-        if (response.data.success == "true") {
-            onVerifyOTP(otp);
-            onClose()
-        }else {
+        } catch (error) {
             setError("Invalid OTP. Please retry.");
-            console.log("Invalid otp");
+            console.log(error);
         }
     };
 
