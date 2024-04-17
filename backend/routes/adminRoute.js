@@ -17,7 +17,8 @@ import {
 import {
     getPostWithPaginations,
     postListUnlist,
-    getPostReports
+    getPostReports,
+    getPostDataOverview
 } from '../controllers/adminController/adminPostController.js'
 
 
@@ -40,6 +41,7 @@ router.get('/users-search',protect,searchUserData);
 router.get('/posts-pagenationcall',protect,getPostWithPaginations);
 router.put('/posts-unlistlist:postId',protect,postListUnlist);
 router.get('/posts-reports/:postid',protect, getPostReports);
+router.get('/posts-by-month',protect, getPostDataOverview);
 
 
 

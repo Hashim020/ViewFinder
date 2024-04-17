@@ -40,15 +40,15 @@ const getPostReports = async (req, res) => {
         const postId = req.params.postid;
         console.log(postId);
         const post = await Post.findById(postId).populate('reports.userId');
-        
+
         if (!post) {
             return res.status(404).json({ message: "Post not found" });
         }
-        
+
         const reports = post.reports;
-        
+
         res.status(200).json({ reports });
-        
+
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal server error" });
@@ -56,9 +56,28 @@ const getPostReports = async (req, res) => {
 }
 
 
+const getPostDataOverview = async (req, res) => {
+    try {
+        const postsByMonth = await Post.aggregate([
+            {
+                $group: {
+                    _id: { $month: '$createdAt' }, 
+                    count: { $sum: 1 }, 
+                },
+            },
+        ]);
 
-export{
+        res.json(postsByMonth);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+}
+
+
+export {
     getPostWithPaginations,
     postListUnlist,
-    getPostReports
+    getPostReports,
+    getPostDataOverview
 }

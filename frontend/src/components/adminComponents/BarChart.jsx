@@ -1,9 +1,21 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Chart from 'chart.js/auto';
+import axios from 'axios';
 
 const BarChart = () => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
+  const [postData, setPostData] = useState([]);
+
+  useEffect(() => {
+    axios.get('/api/admin/posts-by-month')
+      .then(response => {
+        setPostData(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching post data:', error);
+      });
+  }, []);
 
   useEffect(() => {
     if (chartInstance.current) {
@@ -12,13 +24,15 @@ const BarChart = () => {
 
     const ctx = chartRef.current.getContext('2d');
 
+    const aggregatedData = aggregateDataByMonth(postData);
+
     chartInstance.current = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        labels: Object.keys(aggregatedData),
         datasets: [{
-          label: 'Sales Data', // Update the label as needed
-          data: [100, 150, 200, 180, 220, 250, 300, 280, 270, 320, 350, 400], // Replace with your specific data for each month
+          label: 'Number of Posts',
+          data: Object.values(aggregatedData),
           backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
             'rgba(54, 162, 235, 0.2)',
@@ -46,14 +60,26 @@ const BarChart = () => {
         }
       }
     });
-    
 
     return () => {
       if (chartInstance.current) {
         chartInstance.current.destroy();
       }
     };
-  }, []);
+  }, [postData]);
+
+  const aggregateDataByMonth = (data) => {
+    const aggregatedData = {};
+    data.forEach(item => {
+      const month = new Date(item.createdAt).getMonth(); 
+      if (aggregatedData[month]) {
+        aggregatedData[month]++;
+      } else {
+        aggregatedData[month] = 1;
+      }
+    });
+    return aggregatedData;
+  };
 
   return (
     <div className="w-full max-w-screen-lg mx-auto">
