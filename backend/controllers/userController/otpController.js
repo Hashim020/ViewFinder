@@ -11,11 +11,10 @@ const editProfileSendOtp = async (req, res) => {
         
         const otp = otpgenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
 
-        const userId = req.user._id; // Get the user ID from the request
-        const user = await User.findById(userId); // Find the user by ID
+        const userId = req.user._id;
+        const user = await User.findById(userId);
 
         if (!user) {
-            // Handle case where user with provided email is not found
             return res.status(404).json({ message: 'User not found' });
         }
        
@@ -39,7 +38,6 @@ const editProfileSendOtp = async (req, res) => {
 
         user.otp = otp;
         await user.save();
-        
         res.status(200).json({
             message: 'OTP sent successfully. Please check your email for confirmation.',
             otp: otp,
@@ -51,7 +49,32 @@ const editProfileSendOtp = async (req, res) => {
     }
 }
 
+const verifyOtpChangeEmail = async (req, res) => {
+    try {
+        const userId = req.user._id; 
+        const { otp } = req.query;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (otp === user.otp) {
+            user.otp = null; 
+            await user.save();
+            
+            return res.status(200).json({ message: 'OTP verified successfully', success: "true" });
+        } else {
+            return res.status(400).json({ message: 'Invalid OTP', success: false });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
 
 export{
-    editProfileSendOtp
+    editProfileSendOtp,
+    verifyOtpChangeEmail
 }

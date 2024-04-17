@@ -37,7 +37,7 @@ import {
 } from "../controllers/userController/postController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import checkBlockedAndClearToken from "../middleware/userMiddleware/authAndBlockMiddleware.js";
-import { editProfileSendOtp } from "../controllers/userController/otpController.js";
+import { editProfileSendOtp,verifyOtpChangeEmail } from "../controllers/userController/otpController.js";
 
 
 import {
@@ -81,6 +81,7 @@ Router.get("/getotheruser-profile/:userId", protect, checkBlockedAndClearToken, 
 Router.put("/profile-picture", protect, checkBlockedAndClearToken, updateProfilePicture);
 Router.put("/profileCover-picture", protect, checkBlockedAndClearToken, updateProfileCoverPicture);
 Router.get("/otp-generateForeditProfile", protect, checkBlockedAndClearToken, editProfileSendOtp);
+Router.get("/otp-verify-emailChange", protect, checkBlockedAndClearToken, verifyOtpChangeEmail);
 Router.get("/getall-posts", protect, checkBlockedAndClearToken, getAllUsersPost);
 Router.post("/post-LikeUnlike", protect, checkBlockedAndClearToken, likeUnlikePost);
 Router.post("/post-Comment", protect, checkBlockedAndClearToken, postComment);

@@ -195,8 +195,13 @@ const OtpVerificationModal = ({ isOpen, onClose, otpData, onVerifyOTP }) => {
         setOtp(e.target.value);
     };
 
-    const handleVerify = () => {
-        if (otp === otpData.otp) {
+    const handleVerify = async () => {
+        const response = await axios.get("/api/user/otp-verify-emailChange", {
+            params: {
+                otp: otp,
+            }
+        })
+        if (response.success == "true") {
             onVerifyOTP(otp);
             onClose()
         } else {
