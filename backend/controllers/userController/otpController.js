@@ -13,6 +13,7 @@ const editProfileSendOtp = async (req, res) => {
 
         const user = await User.findOneAndUpdate({ email: email }, { otp: otp }, { new: true });
 
+        console.log(user);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
