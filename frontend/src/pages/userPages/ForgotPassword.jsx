@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Otptimer } from "otp-timer-ts";
+import '../../assets/Css/background.css'
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
@@ -62,7 +63,7 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div className="background min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="w-full max-w-md p-5 bg-white rounded-lg shadow">
         <h3 className="my-4 text-2xl font-semibold text-gray-700">{isOtpSent ? 'Verify OTP' : 'Forgot Password'}</h3>
         <form onSubmit={isOtpSent ? handleVerifyOtp : handleSubmit} className="flex flex-col space-y-5">

@@ -10,6 +10,7 @@ import { jwtDecode } from "jwt-decode";
 import { useGoogleRegisterMutation } from '../../Slices/userApiSlice';
 import { setCredentials } from '../../Slices/authSlice.js';
 import SignUpModal from '../../components/modal/userModal/SignUpModal.jsx';
+import '../../assets/Css/background.css'
 
 const RegistrationPage = () => {
   const [name, setName] = useState("");
@@ -95,7 +96,7 @@ const RegistrationPage = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div className="background min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="w-full max-w-md p-5 bg-white rounded-lg shadow">
         <h3 className="my-4 text-2xl font-semibold text-gray-700">Sign Up</h3>
         <form onSubmit={handleSubmit} className="flex flex-col space-y-5">
