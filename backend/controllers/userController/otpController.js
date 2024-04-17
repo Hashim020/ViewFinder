@@ -60,8 +60,6 @@ const verifyOtpChangeEmail = async (req, res) => {
         }
 
         if (otp === user.otp) {
-            user.otp = null; 
-            await user.save();
             
             return res.status(200).json({ message: 'OTP verified successfully', success: "true" });
         } else {
