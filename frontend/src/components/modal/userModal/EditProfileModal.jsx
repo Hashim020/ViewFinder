@@ -201,8 +201,7 @@ const OtpVerificationModal = ({ isOpen, onClose, onVerifyOTP }) => {
         if (response.data.success == "true") {
             onVerifyOTP(otp);
             onClose()
-        }
-        if (response.data.success == "false") {
+        }else {
             setError("Invalid OTP. Please retry.");
             console.log("Invalid otp");
         }
