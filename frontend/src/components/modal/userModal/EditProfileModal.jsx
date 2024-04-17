@@ -201,6 +201,7 @@ const OtpVerificationModal = ({ isOpen, onClose, otpData, onVerifyOTP }) => {
                 otp: otp,
             }
         })
+        console.log(response);
         if (response.success == "true") {
             onVerifyOTP(otp);
             onClose()
