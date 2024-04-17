@@ -1,6 +1,6 @@
 import otpgenerator from 'otp-generator';
 import nodemailer from 'nodemailer';
-import User from '../../models/userModel';
+import User from '../../models/userModel.js'
 
 
 
