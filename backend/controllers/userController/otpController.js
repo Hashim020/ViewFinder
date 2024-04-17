@@ -40,7 +40,6 @@ const editProfileSendOtp = async (req, res) => {
         await user.save();
         res.status(200).json({
             message: 'OTP sent successfully. Please check your email for confirmation.',
-            otp: otp,
             success: "true",
         });
     } catch (error) {

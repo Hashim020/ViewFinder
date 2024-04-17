@@ -45,7 +45,6 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
     }, [userDATA]);
 
     const [otpModalOpen, setOtpModalOpen] = useState(false);
-    const [otpData, setOtpData] = useState(null);
     const [error, setError] = useState('');
 
     const handleChange = (e) => {
@@ -88,9 +87,7 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
                 });
 
                 const otpData = otpResponse.data;
-                console.log(otpData);
                 if (otpData.success === "true") {
-                    setOtpData(otpData);
                     setOtpModalOpen(true);
                     setloading(false)
                     setError('');
@@ -181,14 +178,13 @@ const EditProfileModal = ({ isOpen, onClose, userDATA }) => {
             <OtpVerificationModal
                 isOpen={otpModalOpen}
                 onClose={() => setOtpModalOpen(false)}
-                otpData={otpData}
                 onVerifyOTP={handleVerifyOTP}
             />
         </>
     );
 };
 
-const OtpVerificationModal = ({ isOpen, onClose, otpData, onVerifyOTP }) => {
+const OtpVerificationModal = ({ isOpen, onClose, onVerifyOTP }) => {
     const [otp, setOtp] = useState('');
     const [error, setError] = useState("")
     const handleChange = (e) => {
