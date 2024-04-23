@@ -152,15 +152,14 @@ const postComment = asyncHandler(async (req, res) => {
 });
 
 
-
 const getPostComments = asyncHandler(async (req, res) => {
     try {
         const postId = req.params.postId;
         console.log(postId);
 
-
-        const post = await Post.findById(postId).sort({ createdAt: 1 }).populate({
+        const post = await Post.findById(postId).populate({
             path: 'comments',
+            options: { sort: { createdAt: -1 } }, 
             populate: {
                 path: 'userId',
                 model: 'User'
@@ -176,6 +175,7 @@ const getPostComments = asyncHandler(async (req, res) => {
         res.status(500).json({ message: 'Server Error' });
     }
 });
+
 
 const editPost = async (req, res) => {
     try {
