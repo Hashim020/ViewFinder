@@ -108,7 +108,7 @@ const PostViewModal = ({ isOpen, onClose, postId }) => {
 
     return (
         <Modal
-        motionPreset='slideInBottom'
+        motionPreset='scale'
          size={"full"} isOpen={isOpen} onClose={onClose}>
             <ModalOverlay backdropFilter="auto" backdropBlur='2px' />
             <ModalContent maxH="400px" maxW="1000px">
