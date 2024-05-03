@@ -90,7 +90,7 @@ useEffect(() => {
 
 
   return (
-    <div className='border-r absolute overflow-auto w-[400px] -mt-4' data-aos="fade-right"  >
+    <div className='border-r  overflow-auto w-[400px] -mt-4' data-aos="fade-right"  >
       <h1 className='font-bold pb-9 pt-3'>Messages</h1>
       <div onClick={onOpen} className='cursor-pointer'>
         <IoCreate className=' relative text-lg -mt-[56px] ml-[360px]' />
