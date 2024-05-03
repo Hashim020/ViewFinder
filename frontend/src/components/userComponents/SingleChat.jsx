@@ -143,7 +143,7 @@ const SingleChat = () => {
     }
 
     return (
-        <div className='mr-72'>
+        <div className='absolute pl-16'>
         {selectedChat ? (
             <>
                 <div className=' ml-[1px] w-full '>
