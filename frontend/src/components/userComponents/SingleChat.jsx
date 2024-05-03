@@ -164,6 +164,7 @@ const SingleChat = () => {
                             color="blue.500"
                         />
                     </div>
+                    
                 ) : (
                     <div className="messages">
                         <ScrollableChat messages={messages} />
