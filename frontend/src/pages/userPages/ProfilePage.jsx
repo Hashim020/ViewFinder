@@ -136,8 +136,7 @@ const ProfilePage = () => {
                         <p className="text-sm">Contests</p>
                       </div>
                     </div>
-                    <FaPencil onClick={onEditProfileModalOpen} className='cursor-pointer mr-6 size-7  hover:text-blue-700  absolute right-12' />
-                    <p onClick={onEditProfileModalOpen} className='cursor-pointer bottom-80 mr-1.5 hover:text-blue-700 size-18 absolute right-12'>Edit Profile</p>
+                    <button onClick={onEditProfileModalOpen} className='cursor-pointer bottom-80 mr-1.5 hover:text-blue-700 size-18 absolute right-12'>Edit Profile</button>
                   </div>
                   <div className="mt-6">
                     <h3 className="text-xl font-semibold text-gray-800">Posts</h3>
