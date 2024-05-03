@@ -143,7 +143,7 @@ const SingleChat = () => {
     }
 
     return (
-        <>
+        <div className='mr-72'>
         {selectedChat ? (
             <>
                 <div className=' ml-[1px] w-full '>
@@ -198,8 +198,7 @@ const SingleChat = () => {
                 </Text>
             </Box>
         )}
-    </>
-
+    </div>
     );
 }
 
