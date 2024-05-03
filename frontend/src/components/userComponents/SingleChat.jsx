@@ -144,64 +144,62 @@ const SingleChat = () => {
 
     return (
         <>
-            {selectedChat ? (
-                <>
-                    <div className="chat-header flex items-center justify-between p-3 bg-gray-100">
-                        <p className="font-bold text-xl">
-                            {selectedChat.isGroupChat
-                                ? selectedChat.chatName.toUpperCase()
-                                : getSenderName(user, selectedChat.users)}
-                        </p>
-                        <div onClick={onOpen} className="cursor-pointer">
-                            <BsInfoCircle />
-                        </div>
-                    </div>
+        {selectedChat ? (
+            <>
+                <div className=' ml-[1px] w-full '>
+                    <p className='font-bold text-xl ml-3 '>{selectedChat.isGroupChat ? selectedChat.chatName.toUpperCase() : getSenderName(user, selectedChat.users)}</p>
+                    <hr />
+                    <div onClick={onOpen} className=' cursor-pointer -mt-6 ml-[620px]'><BsInfoCircle /></div>
+                </div>
 
-                    <UpdateGroupModal isOpen={isOpen} onClose={onClose} />
+                <UpdateGroupModal isOpen={isOpen} onClose={onClose} />
 
-                    <div className="messages-container">
-                        {loading ? (
-                            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-transparent opacity-40 z-50">
-                                <Spinner
-                                    size="xl"
-                                    thickness="4px"
-                                    speed="0.65s"
-                                    emptyColor="gray.200"
-                                    color="blue.500"
-                                />
-                            </div>
-                        ) : (
-                            <ScrollableChat messages={messages} />
-                        )}
+                {loading ? (
+                    <div className='fixed top-0 left-200 w-full h-full flex items-center justify-center bg-transparent opacity-40 z-50'>
+                        <Spinner
+                            size="xl"
+                            thickness="4px"
+                            speed="0.65s"
+                            emptyColor="gray.200"
+                            color="blue.500"
+                        />
                     </div>
+                ) : (
+                    <div className="messages">
+                        <ScrollableChat messages={messages} />
+                    </div>
+                )}
+                <div className=' fixed'>
+                    <FormControl
+                        onKeyDown={sendMessage}
+                        id="first-name"
+                        isRequired
+                        w={"680px"}
+                        ml={1}
+                    >
+                        {isTyping ? <>
+                            <p>Typing..</p>
+                        </> : (<></>)}
+                        <Input
+                            variant="filled"
+                            bg="#E0E0E0"
+                            placeholder="Enter a message.."
+                            value={newMessage}
+                            onChange={typingHandler}
+                            width={680}
+                        />
+                    </FormControl>
+                </div>
+            </>
+        ) : (
+            <Box d="flex" alignItems="center" justifyContent="center" h="100%">
+                <Text fontSize="2xl" className='mt-64 ml-[180px]' fontFamily="Work sans">
+                    Click on a user to start chatting
+                </Text>
+            </Box>
+        )}
+    </>
 
-                    <div className="message-input-container">
-                        <FormControl
-                            onKeyDown={sendMessage}
-                            id="first-name"
-                            isRequired
-                            w="100%"
-                        >
-                            {isTyping ? <p>Typing..</p> : <></>}
-                            <Input
-                                variant="filled"
-                                bg="#E0E0E0"
-                                placeholder="Enter a message.."
-                                value={newMessage}
-                                onChange={typingHandler}
-                                width="100%"
-                            />
-                        </FormControl>
-                    </div>
-                </>
-            ) : (
-                <Box d="flex" alignItems="center" justifyContent="center" h="100%">
-                    <Text fontSize="2xl" className="mt-64" fontFamily="Work sans">
-                        Click on a user to start chatting
-                    </Text>
-                </Box>
-            )}
-        </>
     );
 }
 
