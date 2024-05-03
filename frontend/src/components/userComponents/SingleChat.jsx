@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ChatState } from '../../context/ChatProvide';
-import { Box, Button, Spinner, Text } from '@chakra-ui/react';
+import { Box, Spinner, Text } from '@chakra-ui/react';
 import { getSenderName } from '../../config/ChatLogics';
 import { useDisclosure, useToast } from '@chakra-ui/react';
 import { BsInfoCircle } from 'react-icons/bs';
@@ -14,7 +14,7 @@ import io from 'socket.io-client';
 var selectedChatCompare;
 
 const SingleChat = () => {
-    const { user, selectedChat, notification,setNotification, } = ChatState();
+    const { user, selectedChat, notification, setNotification, } = ChatState();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -71,7 +71,7 @@ const SingleChat = () => {
             }
         };
 
-        fetchMessages(); 
+        fetchMessages();
         selectedChatCompare = selectedChat;
     }, [selectedChat, socket, socketConnected, toast]);
 
@@ -108,12 +108,12 @@ const SingleChat = () => {
         if (socket) {
             socket.on("message recieved", (newMessageRecieved) => {
                 if (
-                    !selectedChatCompare || 
+                    !selectedChatCompare ||
                     selectedChatCompare._id !== newMessageRecieved.chat._id
                 ) {
                     if (!notification.includes(newMessageRecieved)) {
-                      setNotification([newMessageRecieved, ...notification]);
-                      setFetchAgain(!fetchAgain);
+                        setNotification([newMessageRecieved, ...notification]);
+                        setFetchAgain(!fetchAgain);
                     }
                 }
                 setMessages([...messages, newMessageRecieved]);
@@ -144,68 +144,64 @@ const SingleChat = () => {
 
     return (
         <>
-        {selectedChat ? (
-            <>
-                <div className='ml-[1px] w-full'>
-                    <p className='font-bold text-xl ml-3'>{selectedChat.isGroupChat ? selectedChat.chatName.toUpperCase() : getSenderName(user, selectedChat.users)}</p>
-                    <hr />
-                    <div onClick={onOpen} className='cursor-pointer -mt-6 ml-[620px]'><BsInfoCircle /></div>
-                </div>
-    
-                <UpdateGroupModal isOpen={isOpen} onClose={onClose} />
-    
-                {loading ? (
-                    <div className='fixed top-0 left-200 w-full h-full flex items-center justify-center bg-transparent opacity-40 z-50'>
-                        <Spinner
-                            size="xl"
-                            thickness="4px"
-                            speed="0.65s"
-                            emptyColor="gray.200"
-                            color="blue.500"
-                        />
+            {selectedChat ? (
+                <>
+                    <div className="chat-header flex items-center justify-between p-3 bg-gray-100">
+                        <p className="font-bold text-xl">
+                            {selectedChat.isGroupChat
+                                ? selectedChat.chatName.toUpperCase()
+                                : getSenderName(user, selectedChat.users)}
+                        </p>
+                        <div onClick={onOpen} className="cursor-pointer">
+                            <BsInfoCircle />
+                        </div>
                     </div>
-                ) : (
-                    <div className="messages">
-                        <ScrollableChat messages={messages} />
+
+                    <UpdateGroupModal isOpen={isOpen} onClose={onClose} />
+
+                    <div className="messages-container">
+                        {loading ? (
+                            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-transparent opacity-40 z-50">
+                                <Spinner
+                                    size="xl"
+                                    thickness="4px"
+                                    speed="0.65s"
+                                    emptyColor="gray.200"
+                                    color="blue.500"
+                                />
+                            </div>
+                        ) : (
+                            <ScrollableChat messages={messages} />
+                        )}
                     </div>
-                )}
-                <div className='fixed bottom-0 w-full flex justify-between'>
-                    <FormControl
-                        onKeyDown={sendMessage}
-                        id="first-name"
-                        isRequired
-                        w={['calc(100% - 100px)', 'calc(100% - 100px)', '680px']} // Adjust width for different screen sizes
-                        ml={[0, 0, 1]} // Adjust margin-left for different screen sizes
-                    >
-                        {isTyping && <p className="mt-2 ml-3">Typing..</p>}
-                        <Input
-                            variant="filled"
-                            bg="#E0E0E0"
-                            placeholder="Enter a message.."
-                            value={newMessage}
-                            onChange={typingHandler}
-                            width={['calc(100% - 100px)', 'calc(100% - 100px)', 680]} // Adjust width for different screen sizes
-                        />
-                    </FormControl>
-                    <Button
-                        colorScheme="blue"
-                        onClick={sendMessage}
-                        size="lg"
-                        ml={2} // Add margin to separate from the input field
-                    >
-                        Send
-                    </Button>
-                </div>
-            </>
-        ) : (
-            <Box d="flex" alignItems="center" justifyContent="center" h="100%">
-                <Text fontSize="2xl" className='mt-64 ml-[180px]' fontFamily="Work sans">
-                    Click on a user to start chatting
-                </Text>
-            </Box>
-        )}
-    </>
-    
+
+                    <div className="message-input-container">
+                        <FormControl
+                            onKeyDown={sendMessage}
+                            id="first-name"
+                            isRequired
+                            w="100%"
+                        >
+                            {isTyping ? <p>Typing..</p> : <></>}
+                            <Input
+                                variant="filled"
+                                bg="#E0E0E0"
+                                placeholder="Enter a message.."
+                                value={newMessage}
+                                onChange={typingHandler}
+                                width="100%"
+                            />
+                        </FormControl>
+                    </div>
+                </>
+            ) : (
+                <Box d="flex" alignItems="center" justifyContent="center" h="100%">
+                    <Text fontSize="2xl" className="mt-64" fontFamily="Work sans">
+                        Click on a user to start chatting
+                    </Text>
+                </Box>
+            )}
+        </>
     );
 }
 
