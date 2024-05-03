@@ -143,7 +143,7 @@ const SingleChat = () => {
     }
 
     return (
-        <div className='absolute pl-[400px]'>
+        <div className='absolute ml-14 pl-[400px]'>
         {selectedChat ? (
             <>
                 <div className=' ml-[1px] w-full '>
@@ -164,7 +164,7 @@ const SingleChat = () => {
                             color="blue.500"
                         />
                     </div>
-                    
+
                 ) : (
                     <div className="messages">
                         <ScrollableChat messages={messages} />
