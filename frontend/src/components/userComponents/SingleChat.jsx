@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ChatState } from '../../context/ChatProvide';
-import { Box, Spinner, Text } from '@chakra-ui/react';
+import { Box, Button, Spinner, Text } from '@chakra-ui/react';
 import { getSenderName } from '../../config/ChatLogics';
 import { useDisclosure, useToast } from '@chakra-ui/react';
 import { BsInfoCircle } from 'react-icons/bs';
