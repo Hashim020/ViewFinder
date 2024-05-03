@@ -143,63 +143,62 @@ const SingleChat = () => {
     }
 
     return (
-        <div className='absolute ml-14 pl-[400px]'>
-        {selectedChat ? (
-            <>
-                <div className=' ml-[1px] w-full '>
-                    <p className='font-bold text-xl ml-3 '>{selectedChat.isGroupChat ? selectedChat.chatName.toUpperCase() : getSenderName(user, selectedChat.users)}</p>
-                    <hr />
-                    <div onClick={onOpen} className=' cursor-pointer -mt-6 ml-[620px]'><BsInfoCircle /></div>
-                </div>
-
-                <UpdateGroupModal isOpen={isOpen} onClose={onClose} />
-
-                {loading ? (
-                    <div className='fixed top-0 left-200 w-full h-full flex items-center justify-center bg-transparent opacity-40 z-50'>
-                        <Spinner
-                            size="xl"
-                            thickness="4px"
-                            speed="0.65s"
-                            emptyColor="gray.200"
-                            color="blue.500"
-                        />
+        <>
+            {selectedChat ? (
+                <>
+                    <div className=' ml-[1px] w-full '>
+                        <p className='font-bold text-xl ml-3 '>{selectedChat.isGroupChat ? selectedChat.chatName.toUpperCase() : getSenderName(user, selectedChat.users)}</p>
+                        <hr />
+                        <div onClick={onOpen} className=' cursor-pointer -mt-6 ml-[620px]'><BsInfoCircle /></div>
                     </div>
 
-                ) : (
-                    <div className="messages">
-                        <ScrollableChat messages={messages} />
+                    <UpdateGroupModal isOpen={isOpen} onClose={onClose} />
+
+                    {loading ? (
+                        <div className='fixed top-0 left-200 w-full h-full flex items-center justify-center bg-transparent opacity-40 z-50'>
+                            <Spinner
+                                size="xl"
+                                thickness="4px"
+                                speed="0.65s"
+                                emptyColor="gray.200"
+                                color="blue.500"
+                            />
+                        </div>
+                    ) : (
+                        <div className="messages">
+                            <ScrollableChat messages={messages} />
+                        </div>
+                    )}
+                    <div className=' fixed'>
+                        <FormControl
+                            onKeyDown={sendMessage}
+                            id="first-name"
+                            isRequired
+                            w={"680px"}
+                            ml={1}
+                        >
+                            {isTyping ? <>
+                                <p>Typing..</p>
+                            </> : (<></>)}
+                            <Input
+                                variant="filled"
+                                bg="#E0E0E0"
+                                placeholder="Enter a message.."
+                                value={newMessage}
+                                onChange={typingHandler}
+                                width={680}
+                            />
+                        </FormControl>
                     </div>
-                )}
-                <div className=' fixed'>
-                    <FormControl
-                        onKeyDown={sendMessage}
-                        id="first-name"
-                        isRequired
-                        w={"680px"}
-                        ml={1}
-                    >
-                        {isTyping ? <>
-                            <p>Typing..</p>
-                        </> : (<></>)}
-                        <Input
-                            variant="filled"
-                            bg="#E0E0E0"
-                            placeholder="Enter a message.."
-                            value={newMessage}
-                            onChange={typingHandler}
-                            width={680}
-                        />
-                    </FormControl>
-                </div>
-            </>
-        ) : (
-            <Box d="flex" alignItems="center" justifyContent="center" h="100%">
-                <Text fontSize="2xl" className='mt-64 ml-[180px]' fontFamily="Work sans">
-                    Click on a user to start chatting
-                </Text>
-            </Box>
-        )}
-    </div>
+                </>
+            ) : (
+                <Box d="flex" alignItems="center" justifyContent="center" h="100%">
+                    <Text fontSize="2xl" className='mt-64 ml-[180px]' fontFamily="Work sans">
+                        Click on a user to start chatting
+                    </Text>
+                </Box>
+            )}
+        </>
     );
 }
 
